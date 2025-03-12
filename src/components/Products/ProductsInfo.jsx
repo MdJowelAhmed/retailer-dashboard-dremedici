@@ -14,59 +14,34 @@ import {
 import { UploadOutlined } from "@ant-design/icons";
 import GradientButton from "../common/GradiantButton";
 
-const { Option } = Select;
-
-const ProductInfo = () => {
-  const [data, setData] = useState([
-    {
-      key: "1",
-      productName: "Product A",
-      category: "Electronics",
-      totalBoxes: 100,
-      freeBoxes: 10,
-      lowStockAlert: true,
-      price: 500,
-      quantity: 50,
-      commission: 10,
-      images: [
-        "https://i.ibb.co.com/8gh3mqPR/Ellipse-48-1.jpg",
-        "https://i.ibb.co.com/5WRNH1d3/fresh-healthy-fruits-straw-basket-generative-ai-188544-11999.jpg",
-        "https://i.ibb.co.com/8gh3mqPR/Ellipse-48-1.jpg",
-      ],
-    },
-    {
-      key: "2",
-      productName: "Product B",
-      category: "Fashion",
-      totalBoxes: 50,
-      freeBoxes: 5,
-      lowStockAlert: false,
-      price: 200,
-      quantity: 30,
-      commission: 5,
-      images: [
-        "https://i.ibb.co.com/8gh3mqPR/Ellipse-48-1.jpg",
-        "https://i.ibb.co.com/5WRNH1d3/fresh-healthy-fruits-straw-basket-generative-ai-188544-11999.jpg",
-        "https://i.ibb.co.com/8gh3mqPR/Ellipse-48-1.jpg",
-      ],
-    },
-    {
-      key: "3",
-      productName: "Product c",
-      category: "Fashion",
-      totalBoxes: 50,
-      freeBoxes: 5,
-      lowStockAlert: false,
-      price: 200,
-      quantity: 30,
-      commission: 5,
-      images: [
-        "https://i.ibb.co.com/8gh3mqPR/Ellipse-48-1.jpg",
-        "https://i.ibb.co.com/5WRNH1d3/fresh-healthy-fruits-straw-basket-generative-ai-188544-11999.jpg",
-        "https://i.ibb.co.com/8gh3mqPR/Ellipse-48-1.jpg",
-      ],
-    },
-  ]);
+// Sample data for products
+const products = [
+  {
+    id: 1,
+    image:
+      "https://img.freepik.com/free-vector/realistic-podium-background-with-green-leaf_23-2149150073.jpg?t=st=1741763231~exp=1741766831~hmac=0ee92dfaf5688353bd6d1d7c033f86e3f651a5c33fd2af7d4d49ce160f3d6804&w=1060",
+    productName: "Product A",
+    price: 100,
+    stock: 50,
+  },
+  {
+    id: 2,
+    image:
+      "https://img.freepik.com/free-vector/realistic-podium-background-with-plants_23-2149150074.jpg?t=st=1741763197~exp=1741766797~hmac=65c12e6c62b9a647615690dba49f76f306c6a5f09da0f0fbc58ff30421fd1bdd&w=1060",
+    productName: "Product B",
+    price: 200,
+    stock: 30,
+  },
+  {
+    id: 3,
+    image:
+      "https://img.freepik.com/free-photo/empty-white-cosmetics-tube-bamboo-plate_1182-1101.jpg?t=st=1741763141~exp=1741766741~hmac=34f11278ea2ff2553c462c41e465bfd1fef4c1c3c7e967a47b35a2a2bba3a5b1&w=1060",
+    productName: "Product C",
+    price: 150,
+    stock: 100,
+  },
+  // Add more products as needed
+];
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
