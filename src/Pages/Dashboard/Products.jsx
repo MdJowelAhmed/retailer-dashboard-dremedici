@@ -5,7 +5,7 @@ import SalesCardInfo from '../../components/SalesRepsManagement/SalesCardInfo'
 const Products = () => {
   return (
     <div>
-        <SalesCardInfo />
+        {/* <SalesCardInfo /> */}
       <ProductInfo />
     </div>
   )

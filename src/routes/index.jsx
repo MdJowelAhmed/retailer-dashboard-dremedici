@@ -28,6 +28,8 @@ import ViewSalesReps from "../components/SalesRepsManagement/detailsSalesReps/Vi
 import Products from "../Pages/Dashboard/Products";
 import LoyaltyProgram from "../Pages/Dashboard/LoyaltyProgram";
 import CommissionTracking from "../Pages/Dashboard/CommissionTracking";
+import Myorders from "../Pages/Dashboard/Myorders";
+import MyCart from "../Pages/Dashboard/MyCart";
 // import SalesRepsManagementTable from "../components/SalesRepsManagement/SalesRepsManagement";
 
 const router = createBrowserRouter([
@@ -45,8 +47,8 @@ const router = createBrowserRouter([
         element: <SalesManagement />,
       },
       {
-        path: "/retailer",
-        element: <SaleRepsManagement />,
+        path: "/orders",
+        element: <Myorders />,
       },
       {
         path: "/retailer/:id",
@@ -60,6 +62,10 @@ const router = createBrowserRouter([
       {
         path: "/inventory",
         element: <Products />,
+      },
+      {
+        path: "/mycart",
+        element: <MyCart />,
       },
       {
         path: "/loyaltyProgram",

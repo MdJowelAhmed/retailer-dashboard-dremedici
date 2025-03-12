@@ -1,134 +1,225 @@
 import React, { useState } from "react";
 import { Table, Input } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
 
-// Sample Data with Unique Keys
-const dataSource = [
+const data = [
   {
     key: "1",
-    orderId: "#123456",
-    retailerName: "Alice Johnson",
-    salesName: "Alice Johnson",
-    amount: "$2500",
-    status: "Pending",
+    orderId: "001",
+    productName: "Product A",
+    salesRep: "John Doe",
+    orderQuantity: 10,
+    free: 2,
+    amount: 200,
+    status: "Shipped",
   },
   {
     key: "2",
-    orderId: "#123457",
-    retailerName: "Alice Johnson",
-    salesName: "Alice Johnson",
-    amount: "$2500",
+    orderId: "002",
+    productName: "Product B",
+    salesRep: "Jane Smith",
+    orderQuantity: 5,
+    free: 0,
+    amount: 150,
     status: "Pending",
   },
   {
     key: "3",
-    orderId: "#123458",
-    retailerName: "Alice Johnson",
-    salesName: "Alice Johnson",
-    amount: "$2500",
-    status: "Completed",
+    orderId: "003",
+    productName: "Product C",
+    salesRep: "Sam Wilson",
+    orderQuantity: 15,
+    free: 1,
+    amount: 300,
+    status: "Delivered",
   },
   {
     key: "4",
-    orderId: "#123459",
-    retailerName: "Alice Jowel",
-    salesName: "Alice Johnson",
-    amount: "$2500",
-    status: "Completed",
+    orderId: "004",
+    productName: "Product D",
+    salesRep: "Alice Cooper",
+    orderQuantity: 8,
+    free: 0,
+    amount: 120,
+    status: "Shipped",
   },
   {
     key: "5",
-    orderId: "#123460",
-    retailerName: "John Doe",
-    salesName: "Alice Johnson",
-    amount: "$3200",
+    orderId: "005",
+    productName: "Product E",
+    salesRep: "Tom Hardy",
+    orderQuantity: 20,
+    free: 3,
+    amount: 400,
     status: "Pending",
   },
   {
     key: "6",
-    orderId: "#123461",
-    retailerName: "Emma Watson",
-    salesName: "Alice Johnson",
-    amount: "$4100",
-    status: "Completed",
+    orderId: "006",
+    productName: "Product F",
+    salesRep: "Emma Stone",
+    orderQuantity: 10,
+    free: 1,
+    amount: 220,
+    status: "Shipped",
   },
   {
     key: "7",
-    orderId: "#123462",
-    retailerName: "Robert Brown",
-    salesName: "Alice Johnson",
-    amount: "$1800",
-    status: "Pending",
+    orderId: "007",
+    productName: "Product G",
+    salesRep: "Chris Evans",
+    orderQuantity: 30,
+    free: 5,
+    amount: 600,
+    status: "Delivered",
   },
   {
     key: "8",
-    orderId: "#123463",
-    retailerName: "Sophia Lee",
-    salesName: "Alice Johnson",
-    amount: "$2250",
-    status: "Completed",
-  },
-  {
-    key: "9",
-    orderId: "#123464",
-    retailerName: "Michael Clark",
-    salesName: "Alice Johnson",
-    amount: "$2750",
+    orderId: "008",
+    productName: "Product H",
+    salesRep: "Natalie Portman",
+    orderQuantity: 12,
+    free: 1,
+    amount: 250,
     status: "Pending",
   },
   {
+    key: "9",
+    orderId: "009",
+    productName: "Product I",
+    salesRep: "Matt Damon",
+    orderQuantity: 5,
+    free: 0,
+    amount: 100,
+    status: "Shipped",
+  },
+  {
     key: "10",
-    orderId: "#123465",
-    retailerName: "David Miller",
-    salesName: "Alice Johnson",
-    amount: "$3900",
-    status: "Completed",
+    orderId: "010",
+    productName: "Product J",
+    salesRep: "Scarlett Johansson",
+    orderQuantity: 18,
+    free: 2,
+    amount: 360,
+    status: "Delivered",
+  },
+  {
+    key: "11",
+    orderId: "011",
+    productName: "Product K",
+    salesRep: "Ryan Gosling",
+    orderQuantity: 25,
+    free: 4,
+    amount: 500,
+    status: "Pending",
+  },
+  {
+    key: "12",
+    orderId: "012",
+    productName: "Product L",
+    salesRep: "Jennifer Lawrence",
+    orderQuantity: 7,
+    free: 1,
+    amount: 140,
+    status: "Shipped",
+  },
+  {
+    key: "13",
+    orderId: "013",
+    productName: "Product M",
+    salesRep: "Hugh Jackman",
+    orderQuantity: 9,
+    free: 0,
+    amount: 180,
+    status: "Delivered",
   },
 ];
 
+
 const columns = [
-  { title: "Order ID", dataIndex: "orderId", key: "orderId" },
-  { title: "Retailer Name", dataIndex: "retailerName", key: "retailerName" },
-  // { title: "Sales Name", dataIndex: "salesName", key: "salesName" },
-  { title: "Amount", dataIndex: "amount", key: "amount" },
-  { title: "Status", dataIndex: "status", key: "status" },
+  {
+    title: "Order ID",
+    dataIndex: "orderId",
+    key: "orderId",
+    align: "center",
+  },
+  {
+    title: "Product Name",
+    dataIndex: "productName",
+    key: "productName",
+    align: "center",
+  },
+  {
+    title: "Sales Rep",
+    dataIndex: "salesRep",
+    key: "salesRep",
+    align: "center",
+  },
+  {
+    title: "Order Quantity",
+    dataIndex: "orderQuantity",
+    key: "orderQuantity",
+    align: "center",
+  },
+  {
+    title: "Free",
+    dataIndex: "free",
+    key: "free",
+    align: "center",
+  },
+  {
+    title: "Amount",
+    dataIndex: "amount",
+    key: "amount",
+    align: "center",
+  },
+  {
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
+    align: "center",
+  },
+  {
+    title: "Action",
+    dataIndex: "",
+    key: "action",
+    align: "center",
+  },
 ];
 
 const OrderTable = () => {
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState(""); // State to store search text
 
-  // Search handler
-  const handleSearch = (value) => setSearchText(value);
+  // Function to handle search
+  const handleSearch = (value) => {
+    setSearchText(value.toLowerCase());
+  };
 
-  // Filtering the data based on the search text
-  const filteredData = dataSource.filter(
-    (item) =>
-      item.orderId.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.retailerName.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.salesName.toLowerCase().includes(searchText.toLowerCase())
-  );
+  // Filter data based on search text
+  const filteredData = data.filter((item) => {
+    return (
+      item.orderId.toLowerCase().includes(searchText) ||
+      item.productName.toLowerCase().includes(searchText)
+    );
+  });
 
   return (
     <div>
-      <div className="flex justify-between mb-4 items-center">
-        <h1 className="text-2xl font-bold text-gray-800">Sales Retailer</h1>
+      <div className="flex justify-between mb-6">
+        <h2 className="text-2xl font-bold">Recent Orders</h2>
         <Input
-          placeholder="Search Order, Retailer, Sales"
-          value={searchText}
+          placeholder="Search by Order ID or Product Name"
           onChange={(e) => handleSearch(e.target.value)}
-          prefix={<SearchOutlined />}
-          className="w-1/3 py-2"
+          className="w-64 py-2"
         />
       </div>
-      {/* Table Container with Gradient Background */}
-      <div className="px-6 pt-6 rounded-lg bg-gradient-to-r from-primary to-secondary">
+      <div className="px-6 pt-6 rounded-xl bg-gradient-to-r from-primary to-secondary">
         <Table
-          dataSource={filteredData}
+          dataSource={filteredData} // Display filtered data
           columns={columns}
-          pagination={{ pageSize: 7 }}
+          pagination={{ pageSize: 12 }}
           bordered={false}
           size="small"
-          rowClassName="custom-table" 
+          rowClassName="custom-table"
         />
       </div>
     </div>

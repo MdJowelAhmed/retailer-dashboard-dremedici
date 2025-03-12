@@ -65,7 +65,7 @@ const Sidebar = () => {
     //   label: <Link to="/salesManagement">Sales Management</Link>,
     // },
     {
-      key: "/retailer",
+      key: "/orders",
       icon: (
         <img
           src={Frame3}
@@ -79,7 +79,7 @@ const Sidebar = () => {
           className="icon-image"
         />
       ),
-      label: <Link to="/retailer">My Retailer</Link>,
+      label: <Link to="/orders">My Orders</Link>,
     },
     {
       key: "/salesRepsManage",
@@ -115,6 +115,23 @@ const Sidebar = () => {
         />
       ),
       label: <Link to="/inventory">Inventory</Link>,
+    },
+    {
+      key: "/mycart",
+      icon: (
+        <img
+          src={Frame5}
+          alt="Retailer Icon"
+          style={{
+            width: "24px",
+            height: "24px",
+            filter: "invert(1) grayscale(1)", // Black by default
+            transition: "filter 0.3s ease", // Smooth transition for hover effect
+          }}
+          className="icon-image"
+        />
+      ),
+      label: <Link to="/mycart">My Cart</Link>,
     },
     {
       key: "/loyaltyProgram",

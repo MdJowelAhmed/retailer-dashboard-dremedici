@@ -1,225 +1,208 @@
 import React, { useState } from "react";
-import { Table, Button, Input, Space, ConfigProvider } from "antd";
-import Swal from "sweetalert2";
-import UpdateModal from "../common/UpdateModal";
+import { Table, Input, Button, Select, Modal } from "antd";
 import GradientButton from "../common/GradiantButton";
 
-const retailersData = Array.from({ length: 25 }, (_, i) => ({
-  id: i + 1,
-  name: `Retailer ${i + 1}`,
-  email: `retailer${i + 1}@gmail.com`,
-  phone: `+23191633389${i + 1}`,
-  totalOrder: Math.floor(Math.random() * 100),
-  totalSales: `$${(Math.random() * 1000).toFixed(2)}`,
-  accountStatus: i % 2 === 0 ? "Active" : "Inactive",
-  image: `https://img.freepik.com/free-photo/portrait-handsome-young-man-with-arms-crossed-holding-white-headphone-around-his-neck_23-2148096439.jpg?semt=ais_hybrid/50?text=R${
-    i + 1
-  }`,
-}));
+// Sample data
+const data = [
+  {
+    key: "1",
+    orderId: "001",
+    productName: "Product A",
+    salesRep: "John Doe",
+    orderQuantity: 10,
+    free: 2,
+    amount: 200,
+    status: "Shipped",
+    image:
+      "https://i.ibb.co.com/5WRNH1d3/fresh-healthy-fruits-straw-basket-generative-ai-188544-11999.jpg",
+  },
+  {
+    key: "2",
+    orderId: "002",
+    productName: "Product B",
+    salesRep: "Jane Smith",
+    orderQuantity: 5,
+    free: 0,
+    amount: 150,
+    status: "Pending",
+    image:
+      "https://i.ibb.co.com/5WRNH1d3/fresh-healthy-fruits-straw-basket-generative-ai-188544-11999.jpg",
+  },
+  // Add other rows as needed
+];
 
-const RetailerManageTable = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [retailers, setRetailers] = useState(retailersData);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+const MyOrderTable = () => {
+  const [searchText, setSearchText] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
- const columns = [
-   {
-     title: "#",
-     dataIndex: "id",
-     key: "id",
-     align: "center",
-     render: (text, record, index) => index + 1,
-   },
-   {
-     title: "Retailer Name",
-     dataIndex: "name",
-     key: "name",
-     align: "center",
-     render: (text, record) => (
-       <div className="flex items-center justify-center">
-         {/* <img
-           src={record.image}
-           alt={record.name}
-           className="w-10 h-10 rounded-full mr-3"
-         /> */}
-         {record.name}
-       </div>
-     ),
-   },
-   {
-     title: "Email",
-     dataIndex: "email",
-     key: "email",
-     align: "center",
-   },
-   {
-     title: "Assigned Sales Rep",
-     dataIndex: "phone",
-     key: "phone",
-     align: "center",
-   },
-   {
-     title: "Total Order",
-     dataIndex: "totalOrder",
-     key: "totalOrder",
-     align: "center",
-   },
-   {
-     title: "Total Sales",
-     dataIndex: "totalSales",
-     key: "totalSales",
-     align: "center",
-   },
-   {
-     title: "Account Status",
-     dataIndex: "accountStatus",
-     key: "accountStatus",
-     align: "center",
-     render: (status) => (
-       <span
-         className={status === "Active" ? "text-green-500 font-bold" : "text-red-500"}
-       >
-         {status}
-       </span>
-     ),
-   },
-   {
-     title: "Action",
-     key: "action",
-     align: "center",
-     render: (_, record) => (
-       <Space>
-           <GradientButton
-             onClick={() => handleEdit(record)}
-           >
-             Edit
-           </GradientButton>
-         
-         <ConfigProvider
-           theme={{
-             token: {
-               colorPrimary: "#FF4D4F",
-               colorPrimaryHover: "#FF7875",
-             },
-           }}
-         >
-           <Button
-             onClick={() => handleDelete(record.id)}
-             type="primary"
-             danger
-             size="large"
-           >
-             Delete
-           </Button>
-         </ConfigProvider>
-       </Space>
-     ),
-   },
- ];
-
-
-  const handleEdit = (user) => {
-    setSelectedUser(user);
-    setIsModalOpen(true);
+  // Function to handle search
+  const handleSearch = (value) => {
+    setSearchText(value.toLowerCase());
   };
 
-  const handleDelete = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setRetailers(retailers.filter((retailer) => retailer.id !== id));
-        Swal.fire("Deleted!", "Retailer has been deleted.", "success");
-      }
-    });
+  // Filter data based on search text and selected status
+  const filteredData = data.filter((item) => {
+    return (
+      (item.orderId.toLowerCase().includes(searchText) ||
+        item.productName.toLowerCase().includes(searchText)) &&
+      (selectedStatus ? item.status === selectedStatus : true)
+    );
+  });
+
+  // Show details modal
+  const showDetails = (record) => {
+    setSelectedProduct(record);
+    setModalVisible(true);
   };
 
-  const handleSave = (updatedUserData) => {
-    if (selectedUser) {
-      // Update existing retailer
-      setRetailers(
-        retailers.map((retailer) =>
-          retailer.id === updatedUserData.id ? updatedUserData : retailer
-        )
-      );
-    } else {
-      // Add new retailer
-      const newRetailer = {
-        ...updatedUserData,
-        id: retailers.length + 1,
-        image:
-          "https://img.freepik.com/free-photo/portrait-handsome-young-man-with-arms-crossed-holding-white-headphone-around-his-neck_23-2148096439.jpg",
-      };
-      setRetailers([...retailers, newRetailer]);
-    }
-    setIsModalOpen(false);
-    setSelectedUser(null);
+  // Handle modal close
+  const handleModalClose = () => {
+    setModalVisible(false);
   };
+
+  const columns = [
+    {
+      title: "Order ID",
+      dataIndex: "orderId",
+      key: "orderId",
+      align: "center",
+    },
+    {
+      title: "Product Name",
+      dataIndex: "productName",
+      key: "productName",
+      align: "center",
+    },
+    {
+      title: "Sales Rep",
+      dataIndex: "salesRep",
+      key: "salesRep",
+      align: "center",
+    },
+    {
+      title: "Order Quantity",
+      dataIndex: "orderQuantity",
+      key: "orderQuantity",
+      align: "center",
+    },
+    {
+      title: "Free",
+      dataIndex: "free",
+      key: "free",
+      align: "center",
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      align: "center",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      align: "center",
+    },
+    {
+      title: "Action",
+      dataIndex: "",
+      key: "action",
+      render: (_, record) => (
+        <div className="flex space-x-2 justify-center">
+          <GradientButton onClick={() => showDetails(record)} type="primary">
+            Details
+          </GradientButton>
+          <Button type="default">Complete</Button>
+        </div>
+      ),
+      align: "center",
+    },
+  ];
 
   return (
-    <div className="">
-      <div className="flex justify-between items-center mb-10">
-        <div>
-          <h2 className="text-2xl font-bold">
-            Retailer List{" "}
-            <span className="text-secondary">{retailersData.length}</span>{" "}
-          </h2>
-        </div>
-        {/* Search and Add Retailer Button */}
-        <div className="flex gap-5 items-center ">
+    <div>
+      <div className="flex justify-between mb-6">
+        <h2 className="text-2xl font-bold">Recent Orders</h2>
+        <div className="flex space-x-4">
           <Input
-            placeholder="Search Retailers Name..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: 300 }}
-            className="py-2.5"
+            placeholder="Search by Order ID or Product Name"
+            onChange={(e) => handleSearch(e.target.value)}
+            className="w-64 py-2"
           />
-          <GradientButton
-            onClick={() => {
-              setSelectedUser(null);
-              setIsModalOpen(true);
-            }}
+          <Select
+            placeholder="Filter by Status"
+            onChange={(value) => setSelectedStatus(value)}
+            className="w-64"
+            allowClear
+            style={{ height: "40px" }}
           >
-            Add Retailer
-          </GradientButton>
+            <Select.Option value="Shipped">Shipped</Select.Option>
+            <Select.Option value="Pending">Pending</Select.Option>
+            <Select.Option value="Delivered">Delivered</Select.Option>
+          </Select>
         </div>
       </div>
-      {/* Table */}
-      <div className="bg-gradient-to-r from-primary to-secondary p-6 rounded-xl">
+      <div className="px-6 pt-6 rounded-xl bg-gradient-to-r from-primary to-secondary">
         <Table
-          dataSource={retailers.filter(
-            (retailer) =>
-              retailer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              retailer.email.toLowerCase().includes(searchTerm.toLowerCase())
-          )}
+          dataSource={filteredData} // Display filtered data
           columns={columns}
-          pagination={{ pageSize: 10 }}
+          pagination={{ pageSize: 12 }}
           bordered={false}
           size="small"
-          rowClassName="custom-row"
-          className="custom-table"
+          rowClassName="custom-table"
         />
       </div>
 
-      {/* Update Modal */}
-      {isModalOpen && (
-        <UpdateModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleSave}
-          userData={selectedUser}
-          editingId={selectedUser ? selectedUser.id : null}
-        />
+      {/* Modal for Product Details */}
+      {selectedProduct && (
+        <Modal
+          title={`Details for ${selectedProduct.productName}`}
+          visible={modalVisible}
+          onCancel={handleModalClose}
+          footer={null}
+        >
+          <div className="">
+            <div className="flex gap-5">
+              <div>
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.productName}
+                  className="mb-4 rounded-full"
+                  style={{ width: "200px", height: "200px" }}
+                />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold mb-2">Product Information</h2>
+                <h3 className="">
+                  Product Name: <span className="font-bold">{selectedProduct.productName}</span>
+                </h3>
+                <p>
+                  <strong>Order ID:</strong> {selectedProduct.orderId}
+                </p>
+                <p>
+                  <strong>Sales Rep:</strong> {selectedProduct.salesRep}
+                </p>
+                <p>
+                  <strong>Order Quantity:</strong>{" "}
+                  {selectedProduct.orderQuantity}
+                </p>
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-bold mb-2">Payment Information</h2>
+            <p>
+              <strong>Amount:</strong> ${selectedProduct.amount}
+            </p>
+            <p>
+              <strong>Status:</strong> {selectedProduct.status}
+            </p>
+          </div>
+        </Modal>
       )}
     </div>
   );
 };
 
-export default RetailerManageTable;
+export default MyOrderTable;

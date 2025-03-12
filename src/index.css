@@ -91,14 +91,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 
-/* Table Head Background */
-.ant-table-thead > tr > th {
-  background: #4E9DAB !important;
-  color: white !important;
-  font-weight: bold !important;
-  text-align: center;
-   margin-bottom: 5px !important;
-}
+
 
 /* Add margin bottom to each row in the table body */
 .ant-table-tbody > tr >th {
