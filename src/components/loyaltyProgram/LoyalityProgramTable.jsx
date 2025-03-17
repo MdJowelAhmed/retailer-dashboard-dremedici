@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import { Card, Checkbox, Modal, Form, Input, Button, Row, Col } from "antd";
 import { StarFilled } from "@ant-design/icons";
 import GradientButton from "../common/GradiantButton";
+import { FaRegEdit } from "react-icons/fa";
 
 const LoyalityProgramTable = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false); // For the edit modal
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [updatedFacilities, setUpdatedFacilities] = useState(""); // State to hold updated facilities
 
   const subscriptionPlans = [
     {
@@ -14,8 +17,8 @@ const LoyalityProgramTable = () => {
       icon: (
         <StarFilled className="text-white text-3xl bg-primary p-2 rounded-full  mr-2" />
       ),
+      facilities: "Subscription : 3 boxes per month",
       benefits: [
-        "Subscription – 3 boxes per month",
         "Free Shipping – Included with subscription orders",
         "No Credit Card Fee – No 3% fee on any order",
         "Exclusive Products – Access to subscription-only items",
@@ -29,8 +32,8 @@ const LoyalityProgramTable = () => {
       icon: (
         <StarFilled className="text-white text-3xl bg-primary p-2 rounded-full  mr-2" />
       ),
+      facilities: "Gold Tier : 4 boxes per month + 1 free box per quarter",
       benefits: [
-        "Gold Tier – 4 boxes per month + 1 free box per quarter",
         "Free Shipping – Included with subscription orders",
         "No Credit Card Fee – No 3% fee on any order",
         "Exclusive Products – Access to subscription-only items",
@@ -44,8 +47,9 @@ const LoyalityProgramTable = () => {
       icon: (
         <StarFilled className="text-white text-3xl bg-primary p-2 rounded-full  mr-2" />
       ),
+      facilities:
+        "Platinum Tier : 5 boxes per month + 2 free boxes per quarter",
       benefits: [
-        "Platinum Tier – 5 boxes per month + 2 free boxes per quarter",
         "Free Shipping – Included with subscription orders",
         "No Credit Card Fee – No 3% fee on any order",
         "Exclusive Products – Access to subscription-only items",
@@ -60,15 +64,32 @@ const LoyalityProgramTable = () => {
     setIsModalVisible(true);
   };
 
+  const showEditModal = (plan) => {
+    setSelectedPlan(plan);
+    setUpdatedFacilities(plan.facilities); // Populate the form with the current facilities
+    setIsEditModalVisible(true); // Open the edit modal
+  };
+
   const handleCancel = () => {
     setIsModalVisible(false);
+    setIsEditModalVisible(false);
     setSelectedPlan(null);
   };
 
   const handleSubmitPayment = (values) => {
     console.log("Payment details: ", values);
-    // Handle payment processing logic here
     handleCancel(); // Close the modal after submission
+  };
+
+  const handleUpdateFacilities = () => {
+    // Update the facilities of the selected plan
+    const updatedPlans = subscriptionPlans.map((plan) =>
+      plan.id === selectedPlan.id
+        ? { ...plan, facilities: updatedFacilities }
+        : plan
+    );
+    console.log("Updated Plan:", updatedPlans);
+    setIsEditModalVisible(false); // Close the edit modal
   };
 
   return (
@@ -102,10 +123,16 @@ const LoyalityProgramTable = () => {
             key={plan.id}
             className={`transition-all rounded-xl font-semibold`}
           >
-            <div className="flex flex-col justify-center items-center mb-4">
+            <div className="flex flex-col justify-center items-center mb-4 ">
               <p className="">{plan.icon}</p>
               <h3 className="text-3xl font-bold mt-3">{plan.tier}</h3>
             </div>
+            <div className="absolute right-10 top-10">
+              <FaRegEdit size={32} onClick={() => showEditModal(plan)} />
+            </div>
+            <ul className="list-disc pl-5 text-gray-600 space-y-3 mb-6">
+              <li>{plan.facilities}</li>
+            </ul>
             <ul className="list-disc pl-5 text-gray-600 space-y-3 mb-6">
               {plan.benefits.map((benefit, index) => (
                 <li key={index}>{benefit}</li>
@@ -190,9 +217,41 @@ const LoyalityProgramTable = () => {
               type="primary"
               htmlType="submit"
               block
-              // className="bg-green-500 text-white h-10 font-semibold"
+              className="bg-green-500 text-white h-10 font-semibold"
             >
               Confirm Payment
+            </GradientButton>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Edit Facilities Modal */}
+      <Modal
+        title="Edit Facilities"
+        visible={isEditModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <Form layout="vertical">
+          <Form.Item
+            name="facilities"
+            label="Facilities"
+            initialValue={selectedPlan?.facilities}
+            rules={[{ required: true, message: "Please enter the facilities" }]}
+          >
+            <Input.TextArea
+              rows={4}
+              value={updatedFacilities}
+              onChange={(e) => setUpdatedFacilities(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item>
+            <GradientButton
+              type="primary"
+              onClick={handleUpdateFacilities}
+              // className="bg-green-500 text-white"
+            >
+              Update Facilities
             </GradientButton>
           </Form.Item>
         </Form>
