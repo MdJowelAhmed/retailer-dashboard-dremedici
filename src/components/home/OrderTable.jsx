@@ -178,12 +178,7 @@ const columns = [
     key: "status",
     align: "center",
   },
-  {
-    title: "Action",
-    dataIndex: "",
-    key: "action",
-    align: "center",
-  },
+ 
 ];
 
 const OrderTable = () => {

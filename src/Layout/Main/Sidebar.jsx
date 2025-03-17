@@ -81,23 +81,23 @@ const Sidebar = () => {
       ),
       label: <Link to="/orders">My Orders</Link>,
     },
-    {
-      key: "/salesRepsManage",
-      icon: (
-        <img
-          src={Frame4}
-          alt="Retailer Icon"
-          style={{
-            width: "24px",
-            height: "24px",
-            filter: "invert(1) grayscale(1)", // Black by default
-            transition: "filter 0.3s ease", // Smooth transition for hover effect
-          }}
-          className="icon-image"
-        />
-      ),
-      label: <Link to="/salesRepsManage">Commission Tracking</Link>,
-    },
+    // {
+    //   key: "/salesRepsManage",
+    //   icon: (
+    //     <img
+    //       src={Frame4}
+    //       alt="Retailer Icon"
+    //       style={{
+    //         width: "24px",
+    //         height: "24px",
+    //         filter: "invert(1) grayscale(1)", // Black by default
+    //         transition: "filter 0.3s ease", // Smooth transition for hover effect
+    //       }}
+    //       className="icon-image"
+    //     />
+    //   ),
+    //   label: <Link to="/salesRepsManage">Commission Tracking</Link>,
+    // },
 
     {
       key: "/inventory",

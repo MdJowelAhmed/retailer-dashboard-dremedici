@@ -3,6 +3,7 @@ import { IoCartOutline } from "react-icons/io5";
 import { products } from "./Products";
 import { MdKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { Link } from "react-router-dom";
+import GradientButton from "../common/GradiantButton";
 
 // Sample data for products
 
@@ -80,21 +81,23 @@ function ProductInfo() {
             <p className="text-gray-700 mt-2">Price: ${product.amount}</p>
             <p className="text-gray-600">In stock: {product.orderQuantity}</p>
             <div className="mt-4 flex justify-between">
-              <button
+              <GradientButton
                 onClick={() => showDetails(product)}
-                className="bg-[#6FBAC2] text-white p-2 rounded-md"
+                // className="bg-primary text-white p-2 px-4 rounded-md"
               >
                 Details
-              </button>
-              <button
+              </GradientButton>
+              <GradientButton
                 onClick={() => addToCart(product)}
-                className="bg-primary text-white p-2 rounded-md"
+                // className="bg-primary text-white p-2 rounded-md"
               >
                 Add to Cart
-              </button>
-              <button className="bg-secondary text-white p-2 rounded-md">
+              </GradientButton>
+              <GradientButton 
+              // className="bg-primary text-white p-2 rounded-md"
+              >
                 Buy Now
-              </button>
+              </GradientButton>
 
             </div>
           </div>
