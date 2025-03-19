@@ -200,14 +200,14 @@ const OrderTable = () => {
   return (
     <div>
       <div className="flex justify-between mb-6">
-        <h2 className="text-2xl font-bold">Recent Orders</h2>
+        <h2 className="lg:text-2xl font-bold">Recent Orders</h2>
         <Input
           placeholder="Search by Order ID or Product Name"
           onChange={(e) => handleSearch(e.target.value)}
-          className="w-64 py-2"
+          className="w-48 lg:w-64 py-2"
         />
       </div>
-      <div className="px-6 pt-6 rounded-xl bg-gradient-to-r from-primary to-secondary">
+      <div className="px-4 lg:px-6 pt-6 rounded-xl bg-gradient-to-r from-primary to-secondary overflow-x-auto w-full">
         <Table
           dataSource={filteredData} // Display filtered data
           columns={columns}
