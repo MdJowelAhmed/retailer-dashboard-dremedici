@@ -20,7 +20,7 @@ const PaymentForm = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto  p-8 rounded-xl shadow-md mb-10">
+    <div className=" mx-auto mt-10 border border-primary p-8 rounded-xl shadow-md mb-10">
       <h2 className="text-3xl font-bold mb-6">Payment Information</h2>
       <Form
         form={form}

@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import { Card, Checkbox, Modal, Form, Input, Button, Row, Col } from "antd";
-import { StarFilled } from "@ant-design/icons";
+import { StarFilled, HeartFilled } from "@ant-design/icons";
 import GradientButton from "../common/GradiantButton";
 import { FaRegEdit } from "react-icons/fa";
 
 const LoyalityProgramTable = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false); // For the edit modal
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [updatedFacilities, setUpdatedFacilities] = useState(""); // State to hold updated facilities
-
-  const subscriptionPlans = [
+  const [editingPlanId, setEditingPlanId] = useState(null);
+  const [editedText, setEditedText] = useState("");
+  const [subscriptionPlans, setSubscriptionPlans] = useState([
     {
       id: 1,
       tier: "Silver Tier",
@@ -57,66 +56,59 @@ const LoyalityProgramTable = () => {
         "Limited Releases – Priority access with a larger allocation",
       ],
     },
-  ];
+  ]);
 
   const showModal = (plan) => {
     setSelectedPlan(plan);
     setIsModalVisible(true);
   };
 
-  const showEditModal = (plan) => {
-    setSelectedPlan(plan);
-    setUpdatedFacilities(plan.facilities); // Populate the form with the current facilities
-    setIsEditModalVisible(true); // Open the edit modal
-  };
-
   const handleCancel = () => {
     setIsModalVisible(false);
-    setIsEditModalVisible(false);
     setSelectedPlan(null);
   };
 
   const handleSubmitPayment = (values) => {
     console.log("Payment details: ", values);
-    handleCancel(); // Close the modal after submission
+    handleCancel();
   };
 
-  const handleUpdateFacilities = () => {
-    // Update the facilities of the selected plan
-    const updatedPlans = subscriptionPlans.map((plan) =>
-      plan.id === selectedPlan.id
-        ? { ...plan, facilities: updatedFacilities }
-        : plan
+  const startEditing = (plan) => {
+    setEditingPlanId(plan.id);
+    setEditedText(plan.facilities);
+  };
+
+  const handleTextChange = (e) => {
+    setEditedText(e.target.value);
+  };
+
+  const handleKeyDown = (e, planId) => {
+    if (e.key === "Enter") {
+      saveChanges(planId);
+    }
+  };
+
+  const saveChanges = (planId) => {
+    setSubscriptionPlans((prevPlans) =>
+      prevPlans.map((plan) =>
+        plan.id === planId
+          ? {
+              ...plan,
+              facilities: (
+                <span>
+                  <HeartFilled className="text-red-500" /> {editedText}
+                </span>
+              ),
+            }
+          : plan
+      )
     );
-    console.log("Updated Plan:", updatedPlans);
-    setIsEditModalVisible(false); // Close the edit modal
+    setEditingPlanId(null);
   };
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-4">Loyalty Program Tier: Gold</h1>
-        <div>
-          <h2 className="font-bold mb-2">Loyalty Progress</h2>
-          <div className="w-1/2 h-4 bg-gray-200 rounded-full overflow-hidden mb-4">
-            <div
-              className="h-full bg-[#336C79] rounded-full"
-              style={{ width: "60%" }}
-            ></div>
-          </div>
-          <div>
-            <p className="font-medium">60% to the next reward.</p>
-            <p>
-              You have placed 15 non-subscription orders. Spend $500 more to
-              reach the next reward tier.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <h2 className="text-2xl font-bold mb-6 mt-16">
-        Choose Your Subscription
-      </h2>
+      <h2 className="text-2xl font-bold mb-6">Choose Your Subscription</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
         {subscriptionPlans.map((plan) => (
           <Card
@@ -128,10 +120,27 @@ const LoyalityProgramTable = () => {
               <h3 className="text-3xl font-bold mt-3">{plan.tier}</h3>
             </div>
             <div className="absolute right-10 top-10">
-              <FaRegEdit size={32} onClick={() => showEditModal(plan)} />
+              <FaRegEdit
+                size={32}
+                onClick={() => startEditing(plan)}
+                className="cursor-pointer hover:text-blue-500"
+              />
             </div>
             <ul className="list-disc pl-5 text-gray-600 space-y-3 mb-6">
-              <li>{plan.facilities}</li>
+              <li>
+                {editingPlanId === plan.id ? (
+                  <textarea
+                    value={editedText}
+                    onChange={handleTextChange}
+                    onKeyDown={(e) => handleKeyDown(e, plan.id)}
+                    autoFocus
+                    className="w-full p-2 border rounded"
+                    rows={3}
+                  />
+                ) : (
+                  plan.facilities
+                )}
+              </li>
             </ul>
             <ul className="list-disc pl-5 text-gray-600 space-y-3 mb-6">
               {plan.benefits.map((benefit, index) => (
@@ -220,38 +229,6 @@ const LoyalityProgramTable = () => {
               className="bg-green-500 text-white h-10 font-semibold"
             >
               Confirm Payment
-            </GradientButton>
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      {/* Edit Facilities Modal */}
-      <Modal
-        title="Edit Facilities"
-        visible={isEditModalVisible}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        <Form layout="vertical">
-          <Form.Item
-            name="facilities"
-            label="Facilities"
-            initialValue={selectedPlan?.facilities}
-            rules={[{ required: true, message: "Please enter the facilities" }]}
-          >
-            <Input.TextArea
-              rows={4}
-              value={updatedFacilities}
-              onChange={(e) => setUpdatedFacilities(e.target.value)}
-            />
-          </Form.Item>
-          <Form.Item>
-            <GradientButton
-              type="primary"
-              onClick={handleUpdateFacilities}
-              // className="bg-green-500 text-white"
-            >
-              Update Facilities
             </GradientButton>
           </Form.Item>
         </Form>

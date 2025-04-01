@@ -1,221 +1,122 @@
 import React, { useState } from "react";
-import { Table, Input } from "antd";
+import { Table, Button } from "antd";
+import { MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 
-const data = [
-  {
-    key: "1",
-    orderId: "001",
-    productName: "Product A",
-    salesRep: "John Doe",
-    orderQuantity: 10,
-    free: 2,
-    amount: 200,
-    status: "Shipped",
-  },
-  {
-    key: "2",
-    orderId: "002",
-    productName: "Product B",
-    salesRep: "Jane Smith",
-    orderQuantity: 5,
-    free: 0,
-    amount: 150,
-    status: "Pending",
-  },
-  {
-    key: "3",
-    orderId: "003",
-    productName: "Product C",
-    salesRep: "Sam Wilson",
-    orderQuantity: 15,
-    free: 1,
-    amount: 300,
-    status: "Delivered",
-  },
-  {
-    key: "4",
-    orderId: "004",
-    productName: "Product D",
-    salesRep: "Alice Cooper",
-    orderQuantity: 8,
-    free: 0,
-    amount: 120,
-    status: "Shipped",
-  },
-  {
-    key: "5",
-    orderId: "005",
-    productName: "Product E",
-    salesRep: "Tom Hardy",
-    orderQuantity: 20,
-    free: 3,
-    amount: 400,
-    status: "Pending",
-  },
-  {
-    key: "6",
-    orderId: "006",
-    productName: "Product F",
-    salesRep: "Emma Stone",
-    orderQuantity: 10,
-    free: 1,
-    amount: 220,
-    status: "Shipped",
-  },
-  {
-    key: "7",
-    orderId: "007",
-    productName: "Product G",
-    salesRep: "Chris Evans",
-    orderQuantity: 30,
-    free: 5,
-    amount: 600,
-    status: "Delivered",
-  },
-  {
-    key: "8",
-    orderId: "008",
-    productName: "Product H",
-    salesRep: "Natalie Portman",
-    orderQuantity: 12,
-    free: 1,
-    amount: 250,
-    status: "Pending",
-  },
-  {
-    key: "9",
-    orderId: "009",
-    productName: "Product I",
-    salesRep: "Matt Damon",
-    orderQuantity: 5,
-    free: 0,
-    amount: 100,
-    status: "Shipped",
-  },
-  {
-    key: "10",
-    orderId: "010",
-    productName: "Product J",
-    salesRep: "Scarlett Johansson",
-    orderQuantity: 18,
-    free: 2,
-    amount: 360,
-    status: "Delivered",
-  },
-  {
-    key: "11",
-    orderId: "011",
-    productName: "Product K",
-    salesRep: "Ryan Gosling",
-    orderQuantity: 25,
-    free: 4,
-    amount: 500,
-    status: "Pending",
-  },
-  {
-    key: "12",
-    orderId: "012",
-    productName: "Product L",
-    salesRep: "Jennifer Lawrence",
-    orderQuantity: 7,
-    free: 1,
-    amount: 140,
-    status: "Shipped",
-  },
-  {
-    key: "13",
-    orderId: "013",
-    productName: "Product M",
-    salesRep: "Hugh Jackman",
-    orderQuantity: 9,
-    free: 0,
-    amount: 180,
-    status: "Delivered",
-  },
-];
+const initialProducts = Array.from({ length: 5 }, (_, index) => ({
+  key: Math.random().toString(),
+  sl: index + 1,
+  productName: `Product-${index + 1}`,
+  category: "Cigar",
+  inStock: "Yes",
+  productPrice: 200,
+  quantity: 50,
+}));
 
-
-const columns = [
-  {
-    title: "Order ID",
-    dataIndex: "orderId",
-    key: "orderId",
-    align: "center",
-  },
-  {
-    title: "Product Name",
-    dataIndex: "productName",
-    key: "productName",
-    align: "center",
-  },
-  {
-    title: "Sales Rep",
-    dataIndex: "salesRep",
-    key: "salesRep",
-    align: "center",
-  },
-  {
-    title: "Order Quantity",
-    dataIndex: "orderQuantity",
-    key: "orderQuantity",
-    align: "center",
-  },
-  {
-    title: "Free",
-    dataIndex: "free",
-    key: "free",
-    align: "center",
-  },
-  {
-    title: "Amount",
-    dataIndex: "amount",
-    key: "amount",
-    align: "center",
-  },
-  {
-    title: "Status",
-    dataIndex: "status",
-    key: "status",
-    align: "center",
-  },
- 
-];
 
 const OrderTable = () => {
-  const [searchText, setSearchText] = useState(""); // State to store search text
+  const [products, setProducts] = useState(initialProducts);
 
-  // Function to handle search
-  const handleSearch = (value) => {
-    setSearchText(value.toLowerCase());
+  const updateQuantity = (index, delta) => {
+    const newProducts = [...products];
+    const newQty = newProducts[index].quantity + delta;
+    newProducts[index].quantity = newQty < 0 ? 0 : newQty;
+    setProducts(newProducts);
   };
 
-  // Filter data based on search text
-  const filteredData = data.filter((item) => {
-    return (
-      item.orderId.toLowerCase().includes(searchText) ||
-      item.productName.toLowerCase().includes(searchText)
-    );
-  });
+  const totalAmount = products.reduce(
+    (sum, item) => sum + item.quantity * item.productPrice,
+    0
+  );
+
+  const totalBox = products.reduce((sum, item) => sum + item.quantity, 0);
+
+  const columns = [
+    {
+      title: "SL",
+      dataIndex: "sl",
+      key: "sl",
+      align: "center",
+      render: (_, __, index) => index + 1,
+    },
+    {
+      title: "Product Name",
+      dataIndex: "productName",
+      key: "productName",
+      align: "center",
+    },
+    {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+      align: "center",
+    },
+    {
+      title: "In Stock",
+      dataIndex: "inStock",
+      key: "inStock",
+      align: "center",
+    },
+    {
+      title: "Product Price",
+      dataIndex: "productPrice",
+      key: "productPrice",
+      align: "center",
+      render: (price) => `$${price}`,
+    },
+    {
+      title: "Quantity",
+      key: "quantity",
+      align: "center",
+      render: (_, __, index) => (
+        <div className="flex justify-center items-center gap-2">
+          <Button
+            icon={<MinusCircleOutlined />}
+            onClick={() => updateQuantity(index, -1)}
+            size="small"
+          />
+          <span className="font-medium">{products[index].quantity}</span>
+          <Button
+            icon={<PlusCircleOutlined />}
+            onClick={() => updateQuantity(index, 1)}
+            size="small"
+          />
+        </div>
+      ),
+    },
+    {
+      title: "Total Amount",
+      key: "total",
+      align: "center",
+      render: (_, item) => `$${item.quantity * item.productPrice}`,
+    },
+  ];
 
   return (
-    <div>
-      <div className="flex justify-between mb-6">
-        <h2 className="lg:text-2xl font-bold">Recent Orders</h2>
-        <Input
-          placeholder="Search by Order ID or Product Name"
-          onChange={(e) => handleSearch(e.target.value)}
-          className="w-48 lg:w-64 py-2"
+    <div className="bg-[#f8f3e9]">
+      {/* Product Table */}
+      <div className="bg-gradient-to-r from-primary to-secondary p-4 rounded-xl overflow-hidden">
+        <Table
+          columns={columns}
+          dataSource={products}
+          bordered
+          rowClassName="bg-white rounded-lg"
         />
       </div>
-      <div className="px-4 lg:px-6 pt-6 rounded-xl bg-gradient-to-r from-primary to-secondary overflow-x-auto w-full">
-        <Table
-          dataSource={filteredData} // Display filtered data
-          columns={columns}
-          pagination={{ pageSize: 12 }}
-          bordered={false}
-          size="small"
-          rowClassName="custom-table"
-        />
+
+      {/* Shopping Cart */}
+      <div className="w-full md:w-96 mt-8 ml-auto bg-white rounded-xl shadow-lg p-6">
+        <h2 className="text-teal-700 font-semibold text-lg mb-4">
+          Shopping Cart
+        </h2>
+        <div className="space-y-1 text-gray-700">
+          <p>Total Box: {totalBox}</p>
+          <p>Free Box: 0</p>
+          <p>Total amount: ${totalAmount}</p>
+        </div>
+        <div className="mt-4 flex justify-between">
+          <Button danger>Remove All</Button>
+          <Button type="primary">Place Order</Button>
+        </div>
       </div>
     </div>
   );

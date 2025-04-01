@@ -1,12 +1,11 @@
 import React from "react";
-import { LuBadgeDollarSign } from "react-icons/lu";
 import { FaUsers } from "react-icons/fa6";
 
 const HomeCard = () => {
   // Data for cards
   const cardData = [
-    { icon: FaUsers, value: "100", label: "Total Retailers" },
-    { icon: FaUsers, value: "$12", label: "Sales Reps" },
+    { icon: FaUsers, value: "$5000", label: "Total Buy" },
+    { icon: FaUsers, value: "200", label: "Total Order Complete" },
     { icon: FaUsers, value: "100", label: "Total Retailers" },
     { icon: FaUsers, value: "$12", label: "Sales Reps" },
   ];
@@ -33,11 +32,11 @@ const SalesRepsCard = ({ icon: Icon, value, label }) => {
         <div className="w-10 h-10 lg:w-16 lg:h-16 rounded-full bg-[#EFEFEF] flex items-center justify-center">
           <Icon color="#007BA5" size={40} />
         </div>
-        <div>
+        <div className="flex flex-col gap-3">
           <h3 className="text-white text-sm  lg:text-[32px] font-semibold">
             {value}
           </h3>
-          <h2 className="text-white text-sm lg:text-center lg:text-xl">{label}</h2>
+          <h2 className="text-white text-sm lg:text-center lg:text-base">{label}</h2>
         </div>
       </div>
     </div>

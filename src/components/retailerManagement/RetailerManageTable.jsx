@@ -8,26 +8,15 @@ const data = [
     key: "1",
     orderId: "001",
     productName: "Product A",
-    salesRep: "John Doe",
-    orderQuantity: 10,
+    date:"March 03 2025",
+    quantity:"200 Boxes",
+    amount:"$2000",
     free: 2,
-    amount: 200,
     status: "Shipped",
     image:
       "https://i.ibb.co.com/5WRNH1d3/fresh-healthy-fruits-straw-basket-generative-ai-188544-11999.jpg",
   },
-  {
-    key: "2",
-    orderId: "002",
-    productName: "Product B",
-    salesRep: "Jane Smith",
-    orderQuantity: 5,
-    free: 0,
-    amount: 150,
-    status: "Pending",
-    image:
-      "https://i.ibb.co.com/5WRNH1d3/fresh-healthy-fruits-straw-basket-generative-ai-188544-11999.jpg",
-  },
+  
   // Add other rows as needed
 ];
 
@@ -64,33 +53,21 @@ const MyOrderTable = () => {
 
   const columns = [
     {
-      title: "Order ID",
+      title: "Invoice#",
       dataIndex: "orderId",
       key: "orderId",
       align: "center",
     },
     {
-      title: "Product Name",
-      dataIndex: "productName",
-      key: "productName",
-      align: "center",
-    },
-    {
-      title: "Sales Rep",
-      dataIndex: "salesRep",
-      key: "salesRep",
+      title: "Order Date",
+      dataIndex: "date",
+      key: "date",
       align: "center",
     },
     {
       title: "Order Quantity",
-      dataIndex: "orderQuantity",
-      key: "orderQuantity",
-      align: "center",
-    },
-    {
-      title: "Free",
-      dataIndex: "free",
-      key: "free",
+      dataIndex: "quantity",
+      key: "quantity",
       align: "center",
     },
     {
@@ -110,11 +87,11 @@ const MyOrderTable = () => {
       dataIndex: "",
       key: "action",
       render: (_, record) => (
-        <div className="flex space-x-2 justify-center">
+        <div className="flex space-x-2 justify-center ">
           <GradientButton onClick={() => showDetails(record)} type="primary">
-            Details
+           View Details
           </GradientButton>
-          <Button type="default">Complete</Button>
+          <Button className="px-8 py-[18px]" type="default">Complete</Button>
         </div>
       ),
       align: "center",
@@ -158,46 +135,68 @@ const MyOrderTable = () => {
       {/* Modal for Product Details */}
       {selectedProduct && (
         <Modal
-          title={`Details for ${selectedProduct.productName}`}
+        centered
+          title="Order Overview"
           visible={modalVisible}
           onCancel={handleModalClose}
           footer={null}
         >
-          <div className="">
-            <div className="flex gap-5">
-              <div>
+          <div className="flex flex-col md:flex-row gap-6">
+            {/* Image Container */}
+            <div className="flex items-center justify-center bg-[#f8fcfe] border rounded-xl w-full md:w-1/2 min-h-[300px]">
+              {selectedProduct.image ? (
                 <img
                   src={selectedProduct.image}
                   alt={selectedProduct.productName}
-                  className="mb-4 rounded-full"
-                  style={{ width: "200px", height: "200px" }}
+                  className="object-contain w-full max-w-[200px] h-auto"
                 />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold mb-2">Product Information</h2>
-                <h3 className="">
-                  Product Name: <span className="font-bold">{selectedProduct.productName}</span>
-                </h3>
-                <p>
-                  <strong>Order ID:</strong> {selectedProduct.orderId}
-                </p>
-                <p>
-                  <strong>Sales Rep:</strong> {selectedProduct.salesRep}
-                </p>
-                <p>
-                  <strong>Order Quantity:</strong>{" "}
-                  {selectedProduct.orderQuantity}
-                </p>
-              </div>
+              ) : (
+                <div className="text-center text-gray-400">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-12 w-12 mx-auto mb-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 16l4-4a3 3 0 014 0l4 4m0 0l4-4a3 3 0 014 0l4 4M3 8h.01M21 8h.01"
+                    />
+                  </svg>
+                  No Image
+                </div>
+              )}
             </div>
 
-            <h2 className="text-2xl font-bold mb-2">Payment Information</h2>
-            <p>
-              <strong>Amount:</strong> ${selectedProduct.amount}
-            </p>
-            <p>
-              <strong>Status:</strong> {selectedProduct.status}
-            </p>
+            {/* Info Section */}
+            <div className="flex-1">
+              <p className="mb-2">
+                <strong>Invoice:</strong> #{selectedProduct.orderId}
+              </p>
+              <p className="mb-2">
+                <strong>Order Date:</strong> {selectedProduct.orderDate}
+              </p>
+              <p className="mb-2">
+                <strong>Product Name:</strong> {selectedProduct.productName}
+              </p>
+              <p className="mb-2">
+                <strong>Order Quantity:</strong> {selectedProduct.orderQuantity}{" "}
+                Boxes
+              </p>
+              <p className="mb-2">
+                <strong>Price:</strong> ${selectedProduct.amount}
+              </p>
+              <p className="mb-2">
+                <strong>Shipping Address:</strong>{" "}
+                {selectedProduct.shippingAddress}
+              </p>
+              <p className="mb-2">
+                <strong>Order Status:</strong> {selectedProduct.status}
+              </p>
+            </div>
           </div>
         </Modal>
       )}

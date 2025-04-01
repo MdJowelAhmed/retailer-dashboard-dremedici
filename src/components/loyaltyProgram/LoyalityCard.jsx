@@ -10,7 +10,7 @@ const LoyalityCard = () => {
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-6 h-[120px] mb-9">
+    <div className="grid grid-cols-2 gap-6 h-[120px] mb-9">
       {cardData.map((data, index) => (
         <SalesRepsCard
           key={index}

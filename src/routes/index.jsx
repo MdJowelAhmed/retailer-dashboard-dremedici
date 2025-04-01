@@ -30,6 +30,7 @@ import LoyaltyProgram from "../Pages/Dashboard/LoyaltyProgram";
 import CommissionTracking from "../Pages/Dashboard/CommissionTracking";
 import Myorders from "../Pages/Dashboard/Myorders";
 import MyCart from "../Pages/Dashboard/MyCart";
+import Subscription from "../Pages/Dashboard/Subscription";
 // import SalesRepsManagementTable from "../components/SalesRepsManagement/SalesRepsManagement";
 
 const router = createBrowserRouter([
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
       {
         path: "/category",
         element: <Category />,
+      },
+      {
+        path: "/subscription",
+        element: <Subscription />,
       },
       {
         path: "/events",

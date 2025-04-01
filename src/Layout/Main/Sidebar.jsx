@@ -1,20 +1,14 @@
 import { Menu } from "antd";
 import React, { useEffect, useState } from "react";
-import {  MdOutlineInventory2 } from "react-icons/md";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { HiMiniUsers, } from "react-icons/hi2";
 import { IoIosLogOut } from "react-icons/io";
-import { IoSettingsOutline } from "react-icons/io5";
-import { PiSquaresFourLight } from "react-icons/pi";
 import image4 from "../../assets/image4.png";
 import Frame1 from "../../assets/Frame1.png";
-import Frame2 from "../../assets/Frame2.png";
 import Frame3 from "../../assets/Frame3.png";
-import Frame4 from "../../assets/Frame4.png";
 import Frame5 from "../../assets/Frame5.png";
 import Frame6 from "../../assets/Frame6.png";
 import Frame7 from "../../assets/Frame7.png";
-import { LuChartNoAxesCombined } from "react-icons/lu";
+import subcription from "../../assets/subcription.png";
 
 
 const Sidebar = () => {
@@ -115,6 +109,23 @@ const Sidebar = () => {
         />
       ),
       label: <Link to="/inventory">Inventory</Link>,
+    },
+    {
+      key: "/subscription",
+      icon: (
+        <img
+          src={subcription}
+          alt="Retailer Icon"
+          style={{
+            width: "24px",
+            height: "24px",
+            filter: "invert(1) grayscale(1)", // Black by default
+            transition: "filter 0.3s ease", // Smooth transition for hover effect
+          }}
+          className="icon-image"
+        />
+      ),
+      label: <Link to="/subscription">Subscription</Link>,
     },
     {
       key: "/mycart",
@@ -232,9 +243,7 @@ const Sidebar = () => {
 
   return (
     <div
-      className="mb-20 h-screen 
-     "
-    >
+      className="mb-20">
       <Link
         to={"/"}
         className="flex items-center justify-center py-4 border-b-2 border-primary"
