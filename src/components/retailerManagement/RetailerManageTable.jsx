@@ -91,7 +91,7 @@ const MyOrderTable = () => {
           <GradientButton onClick={() => showDetails(record)} type="primary">
            View Details
           </GradientButton>
-          <Button className="px-8 py-[18px]" type="default">Complete</Button>
+          <Button className="px-8 py-[18px] cursor-auto" type="default">Complete</Button>
         </div>
       ),
       align: "center",
@@ -143,12 +143,12 @@ const MyOrderTable = () => {
         >
           <div className="flex flex-col md:flex-row gap-6">
             {/* Image Container */}
-            <div className="flex items-center justify-center bg-[#f8fcfe] border rounded-xl w-full md:w-1/2 min-h-[300px]">
+            <div className="flex items-start justify-center bg-[#f8fcfe] w-6/12 min-h-[300px]">
               {selectedProduct.image ? (
                 <img
                   src={selectedProduct.image}
                   alt={selectedProduct.productName}
-                  className="object-contain w-full max-w-[200px] h-auto"
+                  className="object-contain w-full  h-auto rounded-md"
                 />
               ) : (
                 <div className="text-center text-gray-400">

@@ -1,4 +1,4 @@
-import { Menu } from "antd";
+import { Menu, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IoIosLogOut } from "react-icons/io";
@@ -8,19 +8,28 @@ import Frame3 from "../../assets/Frame3.png";
 import Frame5 from "../../assets/Frame5.png";
 import Frame6 from "../../assets/Frame6.png";
 import Frame7 from "../../assets/Frame7.png";
-import subcription from "../../assets/subcription.png";
-
+import Frame8 from "../../assets/subcription.png";
 
 const Sidebar = () => {
   const location = useLocation();
   const path = location.pathname;
   const [selectedKey, setSelectedKey] = useState("");
   const [openKeys, setOpenKeys] = useState([]);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const navigate = useNavigate();
+
+  const showLogoutConfirm = () => {
+    setIsLogoutModalOpen(true);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/auth/login");
+    setIsLogoutModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsLogoutModalOpen(false);
   };
 
   const menuItems = [
@@ -33,31 +42,14 @@ const Sidebar = () => {
           style={{
             width: "24px",
             height: "24px",
-            filter: "invert(1) grayscale(1)", // Black by default
-            transition: "filter 0.3s ease", // Smooth transition for hover effect
+            filter: "invert(1) grayscale(1)",
+            transition: "filter 0.3s ease",
           }}
-          className="icon-image  text-white"
+          className="icon-image text-white"
         />
       ),
       label: <Link to="/">Dashboard Overview</Link>,
     },
-    // {
-    //   key: "/salesManagement",
-    //   icon: (
-    //     <img
-    //       src={Frame2}
-    //       alt="Retailer Icon"
-    //       style={{
-    //         width: "24px",
-    //         height: "24px",
-    //         filter: "invert(1) grayscale(1)", // Black by default
-    //         transition: "filter 0.3s ease", // Smooth transition for hover effect
-    //       }}
-    //       className="icon-image"
-    //     />
-    //   ),
-    //   label: <Link to="/salesManagement">Sales Management</Link>,
-    // },
     {
       key: "/orders",
       icon: (
@@ -67,32 +59,14 @@ const Sidebar = () => {
           style={{
             width: "24px",
             height: "24px",
-            filter: "invert(1) grayscale(1)", // Black by default
-            transition: "filter 0.3s ease", // Smooth transition for hover effect
+            filter: "invert(1) grayscale(1)",
+            transition: "filter 0.3s ease",
           }}
           className="icon-image"
         />
       ),
       label: <Link to="/orders">My Orders</Link>,
     },
-    // {
-    //   key: "/salesRepsManage",
-    //   icon: (
-    //     <img
-    //       src={Frame4}
-    //       alt="Retailer Icon"
-    //       style={{
-    //         width: "24px",
-    //         height: "24px",
-    //         filter: "invert(1) grayscale(1)", // Black by default
-    //         transition: "filter 0.3s ease", // Smooth transition for hover effect
-    //       }}
-    //       className="icon-image"
-    //     />
-    //   ),
-    //   label: <Link to="/salesRepsManage">Commission Tracking</Link>,
-    // },
-
     {
       key: "/inventory",
       icon: (
@@ -102,8 +76,8 @@ const Sidebar = () => {
           style={{
             width: "24px",
             height: "24px",
-            filter: "invert(1) grayscale(1)", // Black by default
-            transition: "filter 0.3s ease", // Smooth transition for hover effect
+            filter: "invert(1) grayscale(1)",
+            transition: "filter 0.3s ease",
           }}
           className="icon-image"
         />
@@ -114,13 +88,13 @@ const Sidebar = () => {
       key: "/subscription",
       icon: (
         <img
-          src={subcription}
+          src={Frame8}
           alt="Retailer Icon"
           style={{
             width: "24px",
             height: "24px",
-            filter: "invert(1) grayscale(1)", // Black by default
-            transition: "filter 0.3s ease", // Smooth transition for hover effect
+            filter: "invert(1) grayscale(1)",
+            transition: "filter 0.3s ease",
           }}
           className="icon-image"
         />
@@ -136,8 +110,8 @@ const Sidebar = () => {
           style={{
             width: "24px",
             height: "24px",
-            filter: "invert(1) grayscale(1)", // Black by default
-            transition: "filter 0.3s ease", // Smooth transition for hover effect
+            filter: "invert(1) grayscale(1)",
+            transition: "filter 0.3s ease",
           }}
           className="icon-image"
         />
@@ -153,15 +127,14 @@ const Sidebar = () => {
           style={{
             width: "24px",
             height: "24px",
-            filter: "invert(1) grayscale(1)", // Black by default
-            transition: "filter 0.3s ease", // Smooth transition for hover effect
+            filter: "invert(1) grayscale(1)",
+            transition: "filter 0.3s ease",
           }}
           className="icon-image"
         />
       ),
       label: <Link to="/loyaltyProgram">Loyalty Program</Link>,
     },
-
     {
       key: "subMenuSetting",
       icon: (
@@ -182,7 +155,7 @@ const Sidebar = () => {
         {
           key: "/profile",
           label: (
-            <Link to="/profile" className="  ">
+            <Link to="/profile" className="">
               Update Profile
             </Link>
           ),
@@ -211,7 +184,7 @@ const Sidebar = () => {
     {
       key: "/logout",
       icon: <IoIosLogOut size={24} />,
-      label: <p onClick={handleLogout}>Logout</p>,
+      label: <p onClick={showLogoutConfirm}>Logout</p>,
     },
   ];
 
@@ -242,8 +215,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div
-      className="mb-20">
+    <div className="mb-20">
       <Link
         to={"/"}
         className="flex items-center justify-center py-4 border-b-2 border-primary"
@@ -263,15 +235,28 @@ const Sidebar = () => {
         }}
         items={menuItems.map((item) => ({
           ...item,
-          label: <span className="">{item.label}</span>, // Ensures text remains black
+          label: <span className="">{item.label}</span>,
           children: item.children
             ? item.children.map((subItem) => ({
                 ...subItem,
-                label: <span className="">{subItem.label}</span>, // Ensures submenu text remains black
+                label: <span className="">{subItem.label}</span>,
               }))
             : undefined,
         }))}
       />
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        centered
+        title="Confirm Logout"
+        open={isLogoutModalOpen}
+        onOk={handleLogout}
+        onCancel={handleCancel}
+        okText="Logout"
+        cancelText="Cancel"
+      >
+        <p>Are you sure you want to logout?</p>
+      </Modal>
     </div>
   );
 };
