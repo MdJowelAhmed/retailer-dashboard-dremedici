@@ -122,9 +122,12 @@ const MyOrderTable = () => {
             allowClear
             style={{ height: "40px" }}
           >
-            <Select.Option value="Shipped">Shipped</Select.Option>
             <Select.Option value="Pending">Pending</Select.Option>
+            <Select.Option value="Processing">Processing</Select.Option>
+            <Select.Option value="Shipped">Shipped</Select.Option>
             <Select.Option value="Delivered">Delivered</Select.Option>
+            <Select.Option value="Canceled">Canceled</Select.Option>
+            <Select.Option value="Refunded">Refunded</Select.Option>
           </Select>
         </div>
       </div>
