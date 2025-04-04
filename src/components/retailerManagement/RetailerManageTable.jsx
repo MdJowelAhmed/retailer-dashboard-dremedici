@@ -9,7 +9,7 @@ const data = [
     orderId: "001",
     productName: "Product A",
     date:"March 03 2025",
-    quantity:"200 Boxes",
+    quantity:"20 Boxes",
     amount:"$2000",
     free: 2,
     status: "Shipped",
@@ -88,15 +88,22 @@ const MyOrderTable = () => {
       key: "action",
       render: (_, record) => (
         <div className="flex space-x-2 justify-center ">
-          <GradientButton onClick={() => showDetails(record)} type="primary">
-           View Details
+          <button
+            className="px-5 rounded-md border cursor-pointer border-primary"
+            onClick={() => showDetails(record)}
+            type="primary"
+          >
+            View Details
+          </button>
+          <GradientButton className="px-8 py-[18px] cursor-default" type="primary">
+            Mark Complete
           </GradientButton>
-          <Button className="px-8 py-[18px] cursor-auto" type="default">Complete</Button>
         </div>
       ),
       align: "center",
     },
   ];
+
 
   return (
     <div>
@@ -135,7 +142,7 @@ const MyOrderTable = () => {
       {/* Modal for Product Details */}
       {selectedProduct && (
         <Modal
-        centered
+          centered
           title="Order Overview"
           visible={modalVisible}
           onCancel={handleModalClose}
@@ -183,11 +190,10 @@ const MyOrderTable = () => {
                 <strong>Product Name:</strong> {selectedProduct.productName}
               </p>
               <p className="mb-2">
-                <strong>Order Quantity:</strong> {selectedProduct.orderQuantity}{" "}
-                Boxes
+                <strong>Order Quantity:</strong> {selectedProduct.quantity}
               </p>
               <p className="mb-2">
-                <strong>Price:</strong> ${selectedProduct.amount}
+                <strong>Price:</strong> {selectedProduct.amount}
               </p>
               <p className="mb-2">
                 <strong>Shipping Address:</strong>{" "}

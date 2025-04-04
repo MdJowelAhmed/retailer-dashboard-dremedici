@@ -1,6 +1,16 @@
-import React, { useState } from "react";
-import { Card, Checkbox, Modal, Form, Input, Button, Row, Col } from "antd";
-import { StarFilled, HeartFilled } from "@ant-design/icons";
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  Checkbox,
+  Modal,
+  Form,
+  Input,
+  Button,
+  Row,
+  Col,
+  message,
+} from "antd";
+import { StarFilled } from "@ant-design/icons";
 import GradientButton from "../common/GradiantButton";
 import { FaRegEdit } from "react-icons/fa";
 
@@ -9,6 +19,7 @@ const LoyalityProgramTable = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [editingPlanId, setEditingPlanId] = useState(null);
   const [editedText, setEditedText] = useState("");
+  const [agreements, setAgreements] = useState({}); // Track agreements per plan
   const [subscriptionPlans, setSubscriptionPlans] = useState([
     {
       id: 1,
@@ -58,18 +69,34 @@ const LoyalityProgramTable = () => {
     },
   ]);
 
-  const showModal = (plan) => {
+  useEffect(() => {
+    // Load selected plan from localStorage if exists
+    const savedPlan = localStorage.getItem("selectedPlan");
+    if (savedPlan) {
+      setSelectedPlan(JSON.parse(savedPlan));
+    }
+  }, []);
+
+  const handlePlanSelect = (plan) => {
+    if (!agreements[plan.id]) {
+      message.warning("Please agree to the terms & conditions first");
+      return;
+    }
     setSelectedPlan(plan);
+    localStorage.setItem("selectedPlan", JSON.stringify(plan));
     setIsModalVisible(true);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    setSelectedPlan(null);
   };
 
   const handleSubmitPayment = (values) => {
     console.log("Payment details: ", values);
+    message.success("Payment confirmed successfully!");
+    localStorage.removeItem("selectedPlan");
+    setSelectedPlan(null);
+    setAgreements({}); // Clear all agreements
     handleCancel();
   };
 
@@ -82,28 +109,29 @@ const LoyalityProgramTable = () => {
     setEditedText(e.target.value);
   };
 
-  const handleKeyDown = (e, planId) => {
-    if (e.key === "Enter") {
-      saveChanges(planId);
-    }
-  };
-
   const saveChanges = (planId) => {
     setSubscriptionPlans((prevPlans) =>
       prevPlans.map((plan) =>
         plan.id === planId
           ? {
               ...plan,
-              facilities: (
-                <span>
-                  <HeartFilled className="text-red-500" /> {editedText}
-                </span>
-              ),
+              facilities: editedText,
             }
           : plan
       )
     );
     setEditingPlanId(null);
+  };
+
+  const cancelEditing = () => {
+    setEditingPlanId(null);
+  };
+
+  const handleTermsChange = (planId, checked) => {
+    setAgreements((prev) => ({
+      ...prev,
+      [planId]: checked,
+    }));
   };
 
   return (
@@ -113,7 +141,11 @@ const LoyalityProgramTable = () => {
         {subscriptionPlans.map((plan) => (
           <Card
             key={plan.id}
-            className={`transition-all rounded-xl font-semibold`}
+            className={`transition-all rounded-xl font-semibold ${
+              selectedPlan?.id === plan.id
+                ? "border-2 border-blue-500 shadow-lg"
+                : ""
+            }`}
           >
             <div className="flex flex-col justify-center items-center mb-4 ">
               <p className="">{plan.icon}</p>
@@ -129,14 +161,25 @@ const LoyalityProgramTable = () => {
             <ul className="list-disc pl-5 text-gray-600 space-y-3 mb-6">
               <li>
                 {editingPlanId === plan.id ? (
-                  <textarea
-                    value={editedText}
-                    onChange={handleTextChange}
-                    onKeyDown={(e) => handleKeyDown(e, plan.id)}
-                    autoFocus
-                    className="w-full p-2 border rounded"
-                    rows={3}
-                  />
+                  <div>
+                    <textarea
+                      value={editedText}
+                      onChange={handleTextChange}
+                      autoFocus
+                      className="w-full p-2 border rounded mb-2"
+                      rows={3}
+                    />
+                    <div className="flex space-x-2">
+                      <Button
+                        type="primary"
+                        onClick={() => saveChanges(plan.id)}
+                        className="bg-blue-500"
+                      >
+                        Save
+                      </Button>
+                      <Button onClick={cancelEditing}>Cancel</Button>
+                    </div>
+                  </div>
                 ) : (
                   plan.facilities
                 )}
@@ -147,56 +190,54 @@ const LoyalityProgramTable = () => {
                 <li key={index}>{benefit}</li>
               ))}
             </ul>
-            <Checkbox className="mb-4">
+            <Checkbox
+              checked={agreements[plan.id] || false}
+              onChange={(e) => handleTermsChange(plan.id, e.target.checked)}
+              className="mb-4"
+            >
               I Agree to the terms & conditions
             </Checkbox>
             <br />
             <GradientButton
               block
-              className="bg-blue-500 text-white h-10 font-semibold"
-              onClick={() => showModal(plan)}
+              className={`h-10 font-semibold ${
+                selectedPlan?.id === plan.id
+                  ? "bg-green-500 text-white"
+                  : "bg-blue-500 text-white"
+              }`}
+              onClick={() => handlePlanSelect(plan)}
             >
-              Choose Your Best Plan
+              {selectedPlan?.id === plan.id
+                ? "Selected Plan"
+                : "Choose Your Best Plan"}
             </GradientButton>
           </Card>
         ))}
       </div>
 
-      {/* Payment Form Modal */}
       <Modal
-        title={`Payment for ${selectedPlan?.tier}`}
+        title="Confirm Payment"
         visible={isModalVisible}
         onCancel={handleCancel}
         footer={null}
       >
-        <Form layout="vertical" onFinish={handleSubmitPayment}>
+        <Form onFinish={handleSubmitPayment}>
           <Form.Item
-            name="nameOnCard"
-            label="Name On Card"
-            rules={[
-              { required: true, message: "Please enter the name on the card" },
-            ]}
-          >
-            <Input placeholder="Name On Card" />
-          </Form.Item>
-
-          <Form.Item
-            name="cardNumber"
             label="Card Number"
+            name="cardNumber"
             rules={[
-              { required: true, message: "Please enter your card number" },
+              { required: true, message: "Please input your card number!" },
             ]}
           >
-            <Input placeholder="Card Number" />
+            <Input placeholder="1234 5678 9012 3456" />
           </Form.Item>
-
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
+                label="Expiry Date"
                 name="expiry"
-                label="MM/YY"
                 rules={[
-                  { required: true, message: "Please enter the expiry date" },
+                  { required: true, message: "Please input expiry date!" },
                 ]}
               >
                 <Input placeholder="MM/YY" />
@@ -204,32 +245,23 @@ const LoyalityProgramTable = () => {
             </Col>
             <Col span={12}>
               <Form.Item
-                name="cvc"
-                label="CVC"
-                rules={[{ required: true, message: "Please enter the CVC" }]}
+                label="CVV"
+                name="cvv"
+                rules={[{ required: true, message: "Please input CVV!" }]}
               >
-                <Input placeholder="CVC" />
+                <Input placeholder="123" />
               </Form.Item>
             </Col>
           </Row>
-
-          <Form.Item
-            name="zipCode"
-            label="Zip Code"
-            rules={[{ required: true, message: "Please enter your zip code" }]}
-          >
-            <Input placeholder="Zip Code" />
-          </Form.Item>
-
           <Form.Item>
-            <GradientButton
+            <Button
               type="primary"
               htmlType="submit"
               block
-              className="bg-green-500 text-white h-10 font-semibold"
+              className="bg-blue-500"
             >
               Confirm Payment
-            </GradientButton>
+            </Button>
           </Form.Item>
         </Form>
       </Modal>

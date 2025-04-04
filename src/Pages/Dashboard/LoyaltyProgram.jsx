@@ -26,25 +26,16 @@ const LoyaltyProgram = () => {
     <div className=" space-y-8">
       {/* <LoyalityProgramTable /> */}
       {/* <PaymentForm /> */}
-      <div className='flex justify-between items-center'>
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-4">
-            Loyalty Program Tier: Gold
-          </h1>
+      <div className="flex justify-between items-center ">
+        <div className="mb-8 w-6/12">
+          <h1 className="text-2xl font-bold mb-4">Subscription: Gold</h1>
           <div>
             <h2 className="font-bold mb-2">Loyalty Progress</h2>
-            <div className="w-1/2 h-4 bg-gray-200 rounded-full overflow-hidden mb-4">
+            <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden mb-4">
               <div
                 className="h-full bg-[#336C79] rounded-full"
                 style={{ width: "60%" }}
               ></div>
-            </div>
-            <div>
-              <p className="font-medium">60% to the next reward.</p>
-              <p>
-                You have placed 15 non-subscription orders. Spend $500 more to
-                reach the next reward tier.
-              </p>
             </div>
           </div>
         </div>
@@ -64,7 +55,7 @@ const LoyaltyProgram = () => {
                 key={index}
                 className="flex justify-between items-center border border-teal-500 rounded-md px-4 py-3 bg-white"
               >
-                <div>
+                <div className=''>
                   <p className="font-medium">{reward.title}</p>
                   {!canRedeem && (
                     <p className="text-sm text-gray-600">

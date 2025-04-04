@@ -67,23 +67,23 @@ const Sidebar = () => {
       ),
       label: <Link to="/orders">My Orders</Link>,
     },
-    {
-      key: "/inventory",
-      icon: (
-        <img
-          src={Frame5}
-          alt="Retailer Icon"
-          style={{
-            width: "24px",
-            height: "24px",
-            filter: "invert(1) grayscale(1)",
-            transition: "filter 0.3s ease",
-          }}
-          className="icon-image"
-        />
-      ),
-      label: <Link to="/inventory">Inventory</Link>,
-    },
+    // {
+    //   key: "/inventory",
+    //   icon: (
+    //     <img
+    //       src={Frame5}
+    //       alt="Retailer Icon"
+    //       style={{
+    //         width: "24px",
+    //         height: "24px",
+    //         filter: "invert(1) grayscale(1)",
+    //         transition: "filter 0.3s ease",
+    //       }}
+    //       className="icon-image"
+    //     />
+    //   ),
+    //   label: <Link to="/inventory">Inventory</Link>,
+    // },
     {
       key: "/subscription",
       icon: (
@@ -101,23 +101,23 @@ const Sidebar = () => {
       ),
       label: <Link to="/subscription">Subscription</Link>,
     },
-    {
-      key: "/mycart",
-      icon: (
-        <img
-          src={Frame5}
-          alt="Retailer Icon"
-          style={{
-            width: "24px",
-            height: "24px",
-            filter: "invert(1) grayscale(1)",
-            transition: "filter 0.3s ease",
-          }}
-          className="icon-image"
-        />
-      ),
-      label: <Link to="/mycart">My Cart</Link>,
-    },
+    // {
+    //   key: "/mycart",
+    //   icon: (
+    //     <img
+    //       src={Frame5}
+    //       alt="Retailer Icon"
+    //       style={{
+    //         width: "24px",
+    //         height: "24px",
+    //         filter: "invert(1) grayscale(1)",
+    //         transition: "filter 0.3s ease",
+    //       }}
+    //       className="icon-image"
+    //     />
+    //   ),
+    //   label: <Link to="/mycart">My Cart</Link>,
+    // },
     {
       key: "/loyaltyProgram",
       icon: (

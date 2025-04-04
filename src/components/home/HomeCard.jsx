@@ -6,8 +6,6 @@ const HomeCard = () => {
   const cardData = [
     { icon: FaUsers, value: "$5000", label: "Total Buy" },
     { icon: FaUsers, value: "200", label: "Total Order Complete" },
-    { icon: FaUsers, value: "100", label: "Total Retailers" },
-    { icon: FaUsers, value: "$12", label: "Sales Reps" },
   ];
 
   return (
