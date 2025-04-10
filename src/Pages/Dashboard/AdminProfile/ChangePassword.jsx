@@ -1,4 +1,4 @@
-import { Button, Form, Input, Checkbox } from "antd";
+import { Button, Form, Input } from "antd";
 import React from "react";
 import GradientButton from "../../../components/common/GradiantButton";
 
@@ -11,8 +11,8 @@ const ChangePassword = () => {
 
   return (
     <div className="flex gap-20">
-      <div className=" w-1/2">
-        <h2 className="text-2xl font-bold mb-5">Update Password</h2>
+      <div className="w-1/2 mx-auto">
+        <h2 className="text-2xl font-bold mb-5 text-center">Update Password</h2>
         <div>
           <Form
             form={form}
@@ -136,44 +136,35 @@ const ChangePassword = () => {
               </Form.Item>
             </div>
 
+            {/* Center the Button using Flexbox */}
             <div
+              className="flex justify-center mb-[20px]"
               style={{
-                width: "50%",
-                display: "flex",
-                gap: "16px",
-                alignItems: "center",
-                marginBottom: "20px",
+                width: "100%",
               }}
             >
-              <div style={{ width: "100%", position: "relative" }}>
-                <Form.Item>
-                  <GradientButton
-                    type="primary"
-                    htmlType="submit"
-                    block
-                    style={{
-                      border: "none",
-                      height: "40px",
-                      background: "#1D75F2",
-                      color: "white",
-                      borderRadius: "8px",
-                      outline: "none",
-                      width: "150px",
-                      position: "absolute",
-                      right: "20px",
-                      bottom: "0px",
-                    }}
-                  >
-                    Update your password
-                  </GradientButton>
-                </Form.Item>
-              </div>
+              <Form.Item>
+                <GradientButton
+                  type="primary"
+                  htmlType="submit"
+                  block
+                  style={{
+                    border: "none",
+                    height: "40px",
+                    background: "#1D75F2",
+                    color: "white",
+                    borderRadius: "8px",
+                    outline: "none",
+                    width: "150px",
+                  }}
+                >
+                  Update your password
+                </GradientButton>
+              </Form.Item>
             </div>
           </Form>
         </div>
       </div>
-
-      
     </div>
   );
 };

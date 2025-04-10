@@ -110,11 +110,11 @@ const OrderTable = () => {
         </h2>
         <div className="space-y-1 text-gray-700">
           <p>Total Box: {totalBox}</p>
-          <p>Free Box: 0</p>
+          {/* <p>Free Box: 0</p> */}
           <p>Total amount: ${totalAmount}</p>
         </div>
         <div className="mt-4 flex justify-between">
-          <Button danger>Remove All</Button>
+          {/* <Button danger>Remove All</Button> */}
           <Button type="primary">Place Order</Button>
         </div>
       </div>

@@ -3,12 +3,16 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IoIosLogOut } from "react-icons/io";
 import image4 from "../../assets/image4.png";
-import Frame1 from "../../assets/Frame1.png";
-import Frame3 from "../../assets/Frame3.png";
-import Frame5 from "../../assets/Frame5.png";
-import Frame6 from "../../assets/Frame6.png";
-import Frame7 from "../../assets/Frame7.png";
-import Frame8 from "../../assets/subcription.png";
+import {
+  Dashboard,
+  InventoryManagement,
+  LoyaltyProgram,
+  RetailersManagement,
+  SalesManagement,
+  SalesRepsManagement,
+  Settings,
+  SubscriptionManagement,
+} from "../../components/common/svg";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -32,124 +36,57 @@ const Sidebar = () => {
     setIsLogoutModalOpen(false);
   };
 
+  // Function to check if a menu item is active
+  const isItemActive = (itemKey) => {
+    return (
+      selectedKey === itemKey ||
+      (itemKey === "subMenuSetting" &&
+        ["/profile", "/terms-and-conditions", "/privacy-policy"].includes(
+          selectedKey
+        ))
+    );
+  };
+
+  // Modified renderIcon function to use className approach
+  const renderIcon = (IconComponent, itemKey) => {
+    const isActive = isItemActive(itemKey);
+    return (
+      <div
+        style={{ width: 24, height: 24 }}
+        className={isActive ? "svg-active" : ""}
+      >
+        <IconComponent
+          className="menu-icon"
+          fill={isActive ? "#ffffff" : "#1E1E1E"}
+        />
+      </div>
+    );
+  };
+
   const menuItems = [
     {
       key: "/",
-      icon: (
-        <img
-          src={Frame1}
-          alt="Retailer Icon"
-          style={{
-            width: "24px",
-            height: "24px",
-            filter: "invert(1) grayscale(1)",
-            transition: "filter 0.3s ease",
-          }}
-          className="icon-image text-white"
-        />
-      ),
+      icon: renderIcon(Dashboard, "/"),
       label: <Link to="/">Dashboard Overview</Link>,
     },
     {
       key: "/orders",
-      icon: (
-        <img
-          src={Frame3}
-          alt="Retailer Icon"
-          style={{
-            width: "24px",
-            height: "24px",
-            filter: "invert(1) grayscale(1)",
-            transition: "filter 0.3s ease",
-          }}
-          className="icon-image"
-        />
-      ),
+      icon: renderIcon(SalesManagement, "/orders"),
       label: <Link to="/orders">My Orders</Link>,
     },
-    // {
-    //   key: "/inventory",
-    //   icon: (
-    //     <img
-    //       src={Frame5}
-    //       alt="Retailer Icon"
-    //       style={{
-    //         width: "24px",
-    //         height: "24px",
-    //         filter: "invert(1) grayscale(1)",
-    //         transition: "filter 0.3s ease",
-    //       }}
-    //       className="icon-image"
-    //     />
-    //   ),
-    //   label: <Link to="/inventory">Inventory</Link>,
-    // },
     {
       key: "/subscription",
-      icon: (
-        <img
-          src={Frame8}
-          alt="Retailer Icon"
-          style={{
-            width: "24px",
-            height: "24px",
-            filter: "invert(1) grayscale(1)",
-            transition: "filter 0.3s ease",
-          }}
-          className="icon-image"
-        />
-      ),
+      icon: renderIcon(SubscriptionManagement, "/subscription"),
       label: <Link to="/subscription">Subscription</Link>,
     },
-    // {
-    //   key: "/mycart",
-    //   icon: (
-    //     <img
-    //       src={Frame5}
-    //       alt="Retailer Icon"
-    //       style={{
-    //         width: "24px",
-    //         height: "24px",
-    //         filter: "invert(1) grayscale(1)",
-    //         transition: "filter 0.3s ease",
-    //       }}
-    //       className="icon-image"
-    //     />
-    //   ),
-    //   label: <Link to="/mycart">My Cart</Link>,
-    // },
     {
       key: "/loyaltyProgram",
-      icon: (
-        <img
-          src={Frame6}
-          alt="Retailer Icon"
-          style={{
-            width: "24px",
-            height: "24px",
-            filter: "invert(1) grayscale(1)",
-            transition: "filter 0.3s ease",
-          }}
-          className="icon-image"
-        />
-      ),
+      icon: renderIcon(LoyaltyProgram, "/loyaltyProgram"),
       label: <Link to="/loyaltyProgram">Loyalty Program</Link>,
     },
     {
       key: "subMenuSetting",
-      icon: (
-        <img
-          src={Frame7}
-          alt="Retailer Icon"
-          style={{
-            width: "24px",
-            height: "24px",
-            filter: "invert(1) grayscale(1)",
-            transition: "filter 0.3s ease",
-          }}
-          className="icon-image"
-        />
-      ),
+      icon: renderIcon(Settings, "subMenuSetting"),
       label: "Settings",
       children: [
         {
@@ -183,7 +120,14 @@ const Sidebar = () => {
     },
     {
       key: "/logout",
-      icon: <IoIosLogOut size={24} />,
+      icon: (
+        <IoIosLogOut
+          size={24}
+          className={`menu-icon ${
+            isItemActive("/logout") ? "text-white" : "text-black"
+          }`}
+        />
+      ),
       label: <p onClick={showLogoutConfirm}>Logout</p>,
     },
   ];
@@ -227,7 +171,7 @@ const Sidebar = () => {
         selectedKeys={[selectedKey]}
         openKeys={openKeys}
         onOpenChange={handleOpenChange}
-        className="font-poppins text-black"
+        className="font-poppins text-black sidebar-menu"
         style={{
           borderRightColor: "transparent",
           background: "transparent",

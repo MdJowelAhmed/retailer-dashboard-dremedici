@@ -27,7 +27,7 @@ const LoyaltyProgram = () => {
       {/* <LoyalityProgramTable /> */}
       {/* <PaymentForm /> */}
       <div className="flex justify-between items-center ">
-        <div className="mb-8 w-6/12">
+        <div className="mb-8 w-full">
           <h1 className="text-2xl font-bold mb-4">Subscription: Gold</h1>
           <div>
             <h2 className="font-bold mb-2">Loyalty Progress</h2>
@@ -40,7 +40,7 @@ const LoyaltyProgram = () => {
           </div>
         </div>
 
-        <LoyalityCard />
+        {/* <LoyalityCard /> */}
       </div>
 
       <div className="bg-[#fcf5e9] p-6 rounded-lg  mx-auto">

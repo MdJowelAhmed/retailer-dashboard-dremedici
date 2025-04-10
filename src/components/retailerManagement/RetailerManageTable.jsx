@@ -8,15 +8,51 @@ const data = [
     key: "1",
     orderId: "001",
     productName: "Product A",
-    date:"March 03 2025",
-    quantity:"20 Boxes",
-    amount:"$2000",
+    date: "March 03 2025",
+    quantity: "20 Boxes",
+    amount: "$2000",
+    free: 2,
+    status: "Processing",
+    image:
+      "https://i.ibb.co.com/5WRNH1d3/fresh-healthy-fruits-straw-basket-generative-ai-188544-11999.jpg",
+  },
+  {
+    key: "2",
+    orderId: "002",
+    productName: "Product B",
+    date: "March 03 2025",
+    quantity: "20 Boxes",
+    amount: "$2000",
     free: 2,
     status: "Shipped",
     image:
       "https://i.ibb.co.com/5WRNH1d3/fresh-healthy-fruits-straw-basket-generative-ai-188544-11999.jpg",
   },
-  
+  {
+    key: "3",
+    orderId: "003",
+    productName: "New Product",
+    date: "March 03 2025",
+    quantity: "20 Boxes",
+    amount: "$2000",
+    free: 2,
+    status: "Delivered",
+    image:
+      "https://i.ibb.co.com/5WRNH1d3/fresh-healthy-fruits-straw-basket-generative-ai-188544-11999.jpg",
+  },
+  {
+    key: "4",
+    orderId: "004",
+    productName: "Pure Product",
+    date: "March 03 2025",
+    quantity: "20 Boxes",
+    amount: "$2000",
+    free: 2,
+    status: "Pending",
+    image:
+      "https://i.ibb.co.com/5WRNH1d3/fresh-healthy-fruits-straw-basket-generative-ai-188544-11999.jpg",
+  },
+
   // Add other rows as needed
 ];
 
@@ -59,7 +95,13 @@ const MyOrderTable = () => {
       align: "center",
     },
     {
-      title: "Order Date",
+      title: "Product Name",
+      dataIndex: "productName",
+      key: "productName",
+      align: "center",
+    },
+    {
+      title: "Order date",
       dataIndex: "date",
       key: "date",
       align: "center",
@@ -89,15 +131,15 @@ const MyOrderTable = () => {
       render: (_, record) => (
         <div className="flex space-x-2 justify-center ">
           <button
-            className="px-5 rounded-md border cursor-pointer border-primary"
+            className="px-5 py-2 rounded-md border cursor-pointer border-primary"
             onClick={() => showDetails(record)}
             type="primary"
           >
             View Details
           </button>
-          <GradientButton className="px-8 py-[18px] cursor-default" type="primary">
+          {/* <GradientButton className="px-8 py-[18px] cursor-default" type="primary">
             Mark Complete
-          </GradientButton>
+          </GradientButton> */}
         </div>
       ),
       align: "center",
@@ -111,7 +153,7 @@ const MyOrderTable = () => {
         <h2 className="text-2xl font-bold">Recent Orders</h2>
         <div className="flex space-x-4">
           <Input
-            placeholder="Search by Order ID or Product Name"
+            placeholder="Search by Invoice ID or Product Name"
             onChange={(e) => handleSearch(e.target.value)}
             className="w-64 py-2"
           />
@@ -127,7 +169,7 @@ const MyOrderTable = () => {
             <Select.Option value="Shipped">Shipped</Select.Option>
             <Select.Option value="Delivered">Delivered</Select.Option>
             <Select.Option value="Canceled">Canceled</Select.Option>
-            <Select.Option value="Refunded">Refunded</Select.Option>
+            {/* <Select.Option value="Refunded">Refunded</Select.Option> */}
           </Select>
         </div>
       </div>

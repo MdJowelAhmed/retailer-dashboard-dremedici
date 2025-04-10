@@ -87,7 +87,16 @@ const UserProfile = () => {
             style={{ marginBottom: 0 }}
             rules={[{ required: true, message: "Please enter your username" }]}
           >
-            <Input placeholder="Enter your Username" />
+            <Input
+              placeholder="Enter your Username"
+              style={{
+                height: "45px", // Increased height
+                backgroundColor: "#f7f7f7", // Light grey background color
+                borderRadius: "8px",
+                border: "1px solid #E0E4EC",
+                outline: "none",
+              }}
+            />
           </Form.Item>
 
           {/* Email */}
@@ -100,7 +109,16 @@ const UserProfile = () => {
               { type: "email", message: "Please enter a valid email" },
             ]}
           >
-            <Input placeholder="Enter your Email" />
+            <Input
+              placeholder="Enter your Email"
+              style={{
+                height: "45px", // Increased height
+                backgroundColor: "#f7f7f7", // Light grey background color
+                borderRadius: "8px",
+                border: "1px solid #E0E4EC",
+                outline: "none",
+              }}
+            />
           </Form.Item>
 
           {/* Address */}
@@ -110,7 +128,16 @@ const UserProfile = () => {
             style={{ marginBottom: 0 }}
             rules={[{ required: true, message: "Please enter your address" }]}
           >
-            <Input placeholder="Enter your Address" />
+            <Input
+              placeholder="Enter your Address"
+              style={{
+                height: "45px", // Increased height
+                backgroundColor: "#f7f7f7", // Light grey background color
+                borderRadius: "8px",
+                border: "1px solid #E0E4EC",
+                outline: "none",
+              }}
+            />
           </Form.Item>
 
           {/* Language */}
@@ -120,7 +147,15 @@ const UserProfile = () => {
             style={{ marginBottom: 0 }}
             rules={[{ required: true, message: "Please select your language" }]}
           >
-            <Select placeholder="Select your Language">
+            <Select
+              placeholder="Select your Language"
+              style={{
+                height: "45px", // Increased height
+                backgroundColor: "#f7f7f7", // Light grey background color
+                borderRadius: "8px",
+                border: "1px solid #E0E4EC",
+              }}
+            >
               <Option value="english">English</Option>
               <Option value="french">French</Option>
               <Option value="spanish">Spanish</Option>

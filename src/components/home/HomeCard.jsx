@@ -4,7 +4,7 @@ import { FaUsers } from "react-icons/fa6";
 const HomeCard = () => {
   // Data for cards
   const cardData = [
-    { icon: FaUsers, value: "$5000", label: "Total Buy" },
+    { icon: FaUsers, value: "$5000", label: "Total Purchased" },
     { icon: FaUsers, value: "200", label: "Total Order Complete" },
   ];
 
