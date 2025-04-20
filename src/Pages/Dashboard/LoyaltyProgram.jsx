@@ -216,7 +216,7 @@ const LoyaltyProgram = () => {
                       <button
                         className={`px-4 py-2 rounded text-white font-medium text-sm transition-colors ${
                           canRedeem
-                            ? "bg-[#6250EE] hover:bg-[#6250EE]"
+                            ? "bg-third hover:bg-[#6250EE]"
                             : "bg-gray-300 cursor-not-allowed"
                         }`}
                         disabled={!canRedeem}

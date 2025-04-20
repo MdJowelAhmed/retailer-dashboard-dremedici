@@ -68,7 +68,7 @@ const OrderTable = () => {
       key: "quantity",
       align: "center",
       render: (_, __, index) => (
-        <div className="flex justify-center items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <Button
             icon={<MinusCircleOutlined />}
             onClick={() => updateQuantity(index, -1)}
@@ -92,9 +92,9 @@ const OrderTable = () => {
   ];
 
   return (
-    <div className="bg-[#f8f3e9]">
+    <div className="">
       {/* Product Table */}
-      <div className="bg-gradient-to-r from-primary to-secondary p-4 rounded-xl overflow-hidden">
+      <div className="p-4 overflow-hidden bg-gradient-to-r from-primary to-secondary rounded-xl">
         <Table
           columns={columns}
           dataSource={products}
@@ -104,18 +104,16 @@ const OrderTable = () => {
       </div>
 
       {/* Shopping Cart */}
-      <div className="w-full md:w-96 mt-8 ml-auto bg-white rounded-xl shadow-lg p-6">
-        <h2 className="text-teal-700 font-semibold text-lg mb-4">
-          Shopping Cart
-        </h2>
+      <div className="w-full p-6 mt-8 ml-auto shadow-lg md:w-96 bg-primary rounded-xl">
+        <h2 className="mb-4 text-lg font-semibold text-white">Shopping Cart</h2>
         <div className="space-y-1 text-gray-700">
-          <p>Total Box: {totalBox}</p>
+          <p className="text-white">Total Box: {totalBox}</p>
           {/* <p>Free Box: 0</p> */}
-          <p>Total amount: ${totalAmount}</p>
+          <p className="text-white">Total amount: ${totalAmount}</p>
         </div>
-        <div className="mt-4 flex justify-between">
+        <div className="flex justify-between mt-4">
           {/* <Button danger>Remove All</Button> */}
-          <Button type="primary">Place Order</Button>
+          <Button type="primary" className="bg-third">Place Order</Button>
         </div>
       </div>
     </div>
