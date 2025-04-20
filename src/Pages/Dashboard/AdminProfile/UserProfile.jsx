@@ -51,137 +51,145 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="flex justify-center items-center">
-      <Form
-        form={form}
-        layout="vertical"
-        style={{ width: "80%" }}
-        onFinish={handleUpdate}
-      >
-        <div className="grid lg:grid-cols-2 grid-cols-1 lg:gap-x-16 w-full gap-y-7">
-          {/* Profile Image */}
-          <div className="col-span-2 flex justify-center">
-            <Form.Item label="Profile Image" style={{ marginBottom: 0 }}>
-              <Upload
-                name="avatar"
-                showUploadList={false}
-                action="/upload" // Adjust this to your server's upload endpoint
-                onChange={handleImageChange}
-                beforeUpload={beforeUpload} // Validate file before upload
-                fileList={fileList} // Bind file list to the Upload component
-                listType="picture-card"
-              >
-                {imageUrl ? (
-                  <Avatar size={100} src={imageUrl} />
-                ) : (
-                  <Avatar size={100} icon={<UploadOutlined />} />
-                )}
-              </Upload>
-            </Form.Item>
-          </div>
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <div className="flex items-center justify-center">
+        <Form
+          form={form}
+          layout="vertical"
+          style={{ width: "80%" }}
+          onFinish={handleUpdate}
+        >
+          <div className="grid w-full grid-cols-1 lg:grid-cols-2 lg:gap-x-16 gap-y-7">
+            {/* Profile Image */}
+            <div className="flex justify-center col-span-2">
+              <Form.Item label="Profile Image" style={{ marginBottom: 0 }}>
+                <Upload
+                  name="avatar"
+                  showUploadList={false}
+                  action="/upload" // Adjust this to your server's upload endpoint
+                  onChange={handleImageChange}
+                  beforeUpload={beforeUpload} // Validate file before upload
+                  fileList={fileList} // Bind file list to the Upload component
+                  listType="picture-card"
+                >
+                  {imageUrl ? (
+                    <Avatar size={100} src={imageUrl} />
+                  ) : (
+                    <Avatar size={100} icon={<UploadOutlined />} />
+                  )}
+                </Upload>
+              </Form.Item>
+            </div>
 
-          {/* Username */}
-          <Form.Item
-            name="username"
-            label="Username"
-            style={{ marginBottom: 0 }}
-            rules={[{ required: true, message: "Please enter your username" }]}
-          >
-            <Input
-              placeholder="Enter your Username"
-              style={{
-                height: "45px", // Increased height
-                backgroundColor: "#f7f7f7", // Light grey background color
-                borderRadius: "8px",
-                border: "1px solid #E0E4EC",
-                outline: "none",
-              }}
-            />
-          </Form.Item>
-
-          {/* Email */}
-          <Form.Item
-            name="email"
-            label="Email"
-            style={{ marginBottom: 0 }}
-            rules={[
-              { required: true, message: "Please enter your email" },
-              { type: "email", message: "Please enter a valid email" },
-            ]}
-          >
-            <Input
-              placeholder="Enter your Email"
-              style={{
-                height: "45px", // Increased height
-                backgroundColor: "#f7f7f7", // Light grey background color
-                borderRadius: "8px",
-                border: "1px solid #E0E4EC",
-                outline: "none",
-              }}
-            />
-          </Form.Item>
-
-          {/* Address */}
-          <Form.Item
-            name="address"
-            label="Address"
-            style={{ marginBottom: 0 }}
-            rules={[{ required: true, message: "Please enter your address" }]}
-          >
-            <Input
-              placeholder="Enter your Address"
-              style={{
-                height: "45px", // Increased height
-                backgroundColor: "#f7f7f7", // Light grey background color
-                borderRadius: "8px",
-                border: "1px solid #E0E4EC",
-                outline: "none",
-              }}
-            />
-          </Form.Item>
-
-          {/* Language */}
-          <Form.Item
-            name="language"
-            label="Language"
-            style={{ marginBottom: 0 }}
-            rules={[{ required: true, message: "Please select your language" }]}
-          >
-            <Select
-              placeholder="Select your Language"
-              style={{
-                height: "45px", // Increased height
-                backgroundColor: "#f7f7f7", // Light grey background color
-                borderRadius: "8px",
-                border: "1px solid #E0E4EC",
-              }}
+            {/* Username */}
+            <Form.Item
+              name="username"
+              label="Username"
+              style={{ marginBottom: 0 }}
+              rules={[
+                { required: true, message: "Please enter your username" },
+              ]}
             >
-              <Option value="english">English</Option>
-              <Option value="french">French</Option>
-              <Option value="spanish">Spanish</Option>
-            </Select>
-          </Form.Item>
-
-          {/* Notification Switch */}
-          <Form.Item
-            name="notifications"
-            label="Enable Notifications"
-            valuePropName="checked"
-            style={{ marginBottom: 0 }}
-          >
-            <Switch defaultChecked className="bg-primary" />
-          </Form.Item>
-
-          {/* Update Profile Button */}
-          <div className="text-end mt-6">
-            <Form.Item>
-              <GradientButton htmlType="submit" block>
-                Update Profile
-              </GradientButton>
+              <Input
+                placeholder="Enter your Username"
+                style={{
+                  height: "45px", // Increased height
+                  backgroundColor: "#f7f7f7", // Light grey background color
+                  borderRadius: "8px",
+                  border: "1px solid #E0E4EC",
+                  outline: "none",
+                }}
+              />
             </Form.Item>
+
+            {/* Email */}
+            <Form.Item
+              name="email"
+              label="Email"
+              style={{ marginBottom: 0 }}
+              rules={[
+                { required: true, message: "Please enter your email" },
+                { type: "email", message: "Please enter a valid email" },
+              ]}
+            >
+              <Input
+                placeholder="Enter your Email"
+                style={{
+                  height: "45px", // Increased height
+                  backgroundColor: "#f7f7f7", // Light grey background color
+                  borderRadius: "8px",
+                  border: "1px solid #E0E4EC",
+                  outline: "none",
+                }}
+              />
+            </Form.Item>
+
+            {/* Address */}
+            <Form.Item
+              name="address"
+              label="Address"
+              style={{ marginBottom: 0 }}
+              rules={[{ required: true, message: "Please enter your address" }]}
+            >
+              <Input
+                placeholder="Enter your Address"
+                style={{
+                  height: "45px", // Increased height
+                  backgroundColor: "#f7f7f7", // Light grey background color
+                  borderRadius: "8px",
+                  border: "1px solid #E0E4EC",
+                  outline: "none",
+                }}
+              />
+            </Form.Item>
+
+            {/* Language */}
+            <Form.Item
+              name="language"
+              label="Language"
+              style={{ marginBottom: 0 }}
+              rules={[
+                { required: true, message: "Please select your language" },
+              ]}
+            >
+              <Select
+                placeholder="Select your Language"
+                style={{
+                  height: "45px", // Increased height
+                  backgroundColor: "#f7f7f7", // Light grey background color
+                  borderRadius: "8px",
+                  border: "1px solid #E0E4EC",
+                }}
+              >
+                <Option value="english">English</Option>
+                <Option value="french">French</Option>
+                <Option value="spanish">Spanish</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="notifications"
+              label="Enable Notifications"
+              valuePropName="checked"
+              style={{ marginBottom: 0, background: "white" }}
+            >
+              <Switch
+                defaultChecked
+                className="custom-switch" // Add your custom class here
+              />
+            </Form.Item>
+
+            {/* Update Profile Button */}
+            <div className="mt-6 text-end">
+              <Form.Item>
+                <GradientButton htmlType="submit" block>
+                  Update Profile
+                </GradientButton>
+              </Form.Item>
+            </div>
           </div>
-        </div>
-      </Form>
+        </Form>
+      </div>
     </div>
   );
 };

@@ -10,14 +10,14 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="flex gap-20">
-      <div className="w-1/2 mx-auto">
-        <h2 className="text-2xl font-bold mb-5 text-center">Update Password</h2>
+    <div className="flex gap-20 p-6 bg-white rounded-lg ">
+      <div className="w-1/2 ">
+        <h2 className="mb-5 text-2xl font-bold">Update Password</h2>
         <div>
           <Form
             form={form}
             layout="vertical"
-            className="lg:ms-[50px] pe-[30px] mt-[30px]"
+            className="lg:ms-[50px] pe-[30px] mt-[30px] "
             initialValues={{
               remember: true,
             }}
@@ -27,7 +27,7 @@ const ChangePassword = () => {
             }}
             onFinish={handleChangePassword}
           >
-            <div className="mb-[20px] w-[100%]">
+            <div className=" mb-[20px]  w-[100%]">
               <Form.Item
                 style={{ marginBottom: 0 }}
                 name="current_password"
@@ -53,7 +53,7 @@ const ChangePassword = () => {
               </Form.Item>
             </div>
 
-            <div className="mb-[20px] w-[100%]">
+            <div className=" mb-[20px]   w-[100%]">
               <Form.Item
                 name="new_password"
                 label={<p style={{ display: "block" }}>New Password</p>}
@@ -96,7 +96,7 @@ const ChangePassword = () => {
               </Form.Item>
             </div>
 
-            <div className="mb-[40px] w-[100%]">
+            <div className=" mb-[40px]   w-[100%]">
               <Form.Item
                 name="confirm_password"
                 label={<p style={{ display: "block" }}>Re-Type Password</p>}
@@ -135,36 +135,49 @@ const ChangePassword = () => {
                 />
               </Form.Item>
             </div>
-
-            {/* Center the Button using Flexbox */}
             <div
-              className="flex justify-center mb-[20px]"
               style={{
-                width: "100%",
+                width: "50%",
+                display: "flex",
+                gap: "16px",
+                alignItems: "center",
+                marginBottom: "20px",
               }}
             >
-              <Form.Item>
-                <GradientButton
-                  type="primary"
-                  htmlType="submit"
-                  block
-                  style={{
-                    border: "none",
-                    height: "40px",
-                    background: "#1D75F2",
-                    color: "white",
-                    borderRadius: "8px",
-                    outline: "none",
-                    width: "150px",
-                  }}
-                >
-                  Update your password
-                </GradientButton>
-              </Form.Item>
+              <div style={{ width: "100%", position: "relative" }}>
+                <Form.Item>
+                  <GradientButton
+                    type="primary"
+                    htmlType="submit"
+                    block
+                    style={{
+                      border: "none",
+                      height: "40px",
+                      background: "#1D75F2",
+                      color: "white",
+                      borderRadius: "8px",
+                      outline: "none",
+                      width: "150px",
+                      position: "absolute",
+                      right: "20px",
+                      bottom: "0px",
+                    }}
+                  >
+                    Update your password
+                  </GradientButton>
+                </Form.Item>
+              </div>
             </div>
           </Form>
         </div>
       </div>
+
+      {/* <div className="w-1/2">
+        <h2 className="text-2xl font-bold mb-[55px]">Payment Getway</h2>
+        <div className="">
+          <GradientButton>Connect with Stripe</GradientButton>
+        </div>
+      </div> */}
     </div>
   );
 };

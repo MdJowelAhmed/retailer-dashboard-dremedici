@@ -13,8 +13,8 @@ const GradientButton = ({ onClick, children }) => {
       style={{
         marginLeft: 10,
         background: isHovered
-          ? "linear-gradient(to right, #336C79, #4E9DAB)" 
-          : "linear-gradient(to right, #4E9DAB, #336C79)", 
+          ? "linear-gradient(to right, #6250EE, #6250EE)" // Reverse gradient on hover
+          : "linear-gradient(to right, #6100EE, #6100EE)", // Default gradient
         color: "white",
         border: "none",
         transition: "background 0.3s ease-in-out",

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -10,132 +10,176 @@
   margin: 0;
 }
 
-/* Ant Design modal footer top margin remove */
+/* Ant Design modal footer */
 .ant-modal-footer {
   margin-top: 0 !important;
 }
 
-/* Ensure selected route icon is white */
-.ant-menu-item-selected .ant-menu-item-icon {
-  color: white !important;
-}
-
-
-/* Ant Design menu item text color - default */
+/* Default menu item styles */
 .ant-menu-item {
   color: black !important;
 }
 
-/* Hover effect - change text color to white and background gradient */
-.ant-menu-item:hover {
-  background: linear-gradient(90deg, #3FC7EE 0%, #0090B9 100%) !important;
-  color: white !important; /* Text color to white */
-}
-
-
+/* Selected menu item */
 .ant-menu-item-selected {
-  background: linear-gradient(90deg,#3FC7EE 0% , #0090B9 100%) !important;
-  color: white !important; 
-  font-weight: bold; 
-  border-radius: 8px; 
+  background: linear-gradient(90deg, #6200EE 0%, #6200EE 100%) !important;
+  color: white !important;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: none !important;
 }
 
-/* Icon color change on hover */
-.ant-menu-item:hover .ant-menu-item-icon {
-  color: white !important;  
+/* Hover styles */
+.ant-menu-item:hover {
+  background: linear-gradient(90deg, #6200EE 0%, #6200EE 100%) !important;
+  color: white !important;
+  transition: none !important;
 }
 
-/* Ant Design Badge */
+/* Icon color on selected & hover */
+.ant-menu-item-selected .ant-menu-item-icon,
+.ant-menu-item:hover .ant-menu-item-icon,
+.ant-menu-item-selected .menu-icon,
+.ant-menu-item:hover .menu-icon {
+  color: white !important;
+  fill: white !important;
+  stroke: white !important;
+  transition: none !important;
+}
+
+/* SVG path fill on selected & hover */
+.ant-menu-item-selected .menu-icon path,
+.ant-menu-item:hover .menu-icon path,
+.ant-menu-item-selected .menu-icon svg path,
+.ant-menu-item:hover .menu-icon svg path,
+.ant-menu-item:hover svg,
+.ant-menu-item:hover svg path {
+  fill: white !important;
+  transition: none !important;
+}
+
+/* Nested text or elements */
+.ant-menu-item:hover a,
+.ant-menu-item:hover span,
+.ant-menu-item:hover p,
+.ant-menu-item:hover * {
+  color: white !important;
+  transition: none !important;
+}
+
+/* Submenu hover styles */
+.ant-menu-submenu-active > .ant-menu-submenu-title,
+.ant-menu-submenu-title:hover {
+  color: white !important;
+  background: linear-gradient(90deg, #6200EE 0%, #6200EE 100%) !important;
+  transition: none !important;
+}
+
+.ant-menu-submenu-active > .ant-menu-submenu-title *,
+.ant-menu-submenu-title:hover * {
+  color: white !important;
+  fill: white !important;
+  transition: none !important;
+}
+
+/* SVG helper classes */
+.hover-white:hover,
+.ant-menu-item:hover .hover-white {
+  fill: white !important;
+  color: white !important;
+  stroke: white !important;
+}
+
+/* Selected menu item image */
+.ant-menu-item-selected .icon-image {
+  filter: invert(1) grayscale(0) brightness(100%) !important;
+}
+
+/* Ant Badge */
 .ant-badge .ant-badge-count {
-  background: #0090B9 !important;
+  background: #6200EE !important;
   color: white !important;
 }
 
-/* Jodit Editor Height */
+/* Jodit Editor */
 .jodit-workplace {
   height: 550px !important;
 }
 
-/* Add this to your CSS */
+/* Table customizations */
 .custom-row {
-  margin-bottom: 10px !important; 
+  margin-bottom: 10px !important;
 }
 
-/* Optional: To add padding to the rows */
 .custom-row .ant-table-cell {
-  padding: 12px 20px; 
+  padding: 12px 20px;
 }
 
-/* Custom table styling */
 .custom-table .ant-table-tbody > tr > td {
-  border-bottom: 1px solid #ddd;  
+  border-bottom: 1px solid #ddd;
 }
 
 .custom-table .ant-table-thead > tr > th {
-  border-bottom: 2px solid #ddd; 
+  border-bottom: 2px solid #ddd;
 }
 
+.ant-table-tbody > tr {
+  margin-bottom: 5px;
+}
 
+.ant-table {
+  border-spacing: 0 5px;
+}
 
-/* Hide number input arrows in WebKit browsers */
+/* Tooltip */
+.custom-tooltip .ant-tooltip-inner {
+  background: linear-gradient(to right, #4E9DAB, #336C79);
+  color: white;
+}
+
+/* Hide input number arrows */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
-
-.ant-menu-item-selected .icon-image {
-  filter: invert(1) grayscale(1) brightness(100%) !important;
-  display: block;
-}
-
-
-
-
-/* Add margin bottom to each row in the table body */
-.ant-table-tbody > tr >th {
-  margin-bottom: 5px;
-}
-
-.ant-table td {
-  text-align: center !important;
-}
-
-.custom-search .ant-input {
-  height: 40px !important;
-}
-
-/* Ensure SVG icons in selected menu items are white */
-.ant-menu-item-selected .menu-icon {
+.ant-pagination-item a {
   color: white !important;
-  fill: white !important;
 }
 
-/* Hover effect for SVG icons */
-.ant-menu-item:hover .menu-icon {
+.ant-pagination-item-active {
+  background-color: white !important;
+  /* border-color: none !important; */
+}
+
+.ant-pagination-item-active a {
+  color: #6200EE !important; 
+  font-weight: bold;
+}
+
+.ant-pagination-prev .ant-pagination-item-link,
+.ant-pagination-next .ant-pagination-item-link {
   color: white !important;
-  fill: white !important;
-}
-
-/* Target SVG paths directly if needed */
-.ant-menu-item-selected .menu-icon path,
-.ant-menu-item-selected .menu-icon svg path {
-  fill: white !important;
-}
-
-.ant-menu-item:hover .menu-icon path,
-.ant-menu-item:hover .menu-icon svg path {
-  fill: white !important;
-}
-
-/* Add this class to handle special SVG components */
-.svg-active svg {
-  fill: white !important;
-}
-
-.svg-active svg path {
-  fill: white !important;
+  /* border-color: white !important; */
 }
 
 
+.ant-pagination-prev,
+.ant-pagination-next {
+  background: transparent !important;
+}
+
+/* Custom Switch background color when OFF */
+.custom-switch .ant-switch-checked {
+  background-color: #6200EE !important;  /* Change this to your preferred color */
+}
+
+/* Custom Switch background color when ON */
+.custom-switch .ant-switch {
+  background-color: #6200EE !important; /* Change this to your preferred color for OFF state */
+}
+
+/* Optional: Change the switch handle color */
+.custom-switch .ant-switch-inner {
+  background-color:#6200EE !important; /* Change the handle color */
+}

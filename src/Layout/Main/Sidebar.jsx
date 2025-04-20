@@ -164,7 +164,7 @@ const Sidebar = () => {
         to={"/"}
         className="flex items-center justify-center py-4 border-b-2 border-primary"
       >
-        <img src={image4} alt="logo" className="w-40 h-40" />
+        <img src={image4} alt="logo" className="w-40 h-32" />
       </Link>
       <Menu
         mode="inline"
@@ -176,6 +176,7 @@ const Sidebar = () => {
           borderRightColor: "transparent",
           background: "transparent",
           marginTop: "30px",
+          // padding: "0px 30px"
         }}
         items={menuItems.map((item) => ({
           ...item,

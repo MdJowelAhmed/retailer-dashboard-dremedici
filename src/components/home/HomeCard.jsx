@@ -5,7 +5,7 @@ const HomeCard = () => {
   // Data for cards
   const cardData = [
     { icon: FaUsers, value: "$5000", label: "Total Purchased" },
-    { icon: FaUsers, value: "200", label: "Total Order Complete" },
+    { icon: FaUsers, value: "200", label: "Total Completed Orders" },
   ];
 
   return (
