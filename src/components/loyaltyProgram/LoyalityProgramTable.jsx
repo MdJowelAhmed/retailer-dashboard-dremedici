@@ -164,13 +164,13 @@ const LoyaltyProgramTable = () => {
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-6">Choose Your Subscription</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+    <div className="mt-10">
+      <h2 className="text-2xl font-bold mb-10">Choose Your Subscription</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-10">
         {subscriptionPlans.map((plan) => (
           <Card
             key={plan.id}
-            className={`transition-all rounded-xl font-semibold ${
+            className={`transition-all rounded-xl font-semibold shadow-xl ${
               selectedPlanId === plan.id
                 ? "border-2 border-[#379683] shadow-lg"
                 : ""

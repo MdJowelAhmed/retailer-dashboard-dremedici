@@ -7,7 +7,7 @@ export default {
         primary: "#6200EE",
         secondary: "#6200EE",
         third: "#03DAC5",
-        baseBg: "#FFFBD6",
+        baseBg: "#FFFFFF",
         // primary: "#4E9DAB",
         // secondary: "#336C79",
         // baseBg: "#FAF2DF",
