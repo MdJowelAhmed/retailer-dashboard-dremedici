@@ -90,14 +90,11 @@ const authSlice = api.injectEndpoints({
             query: () => {
                 return{
                     method: "GET",
-                    url: "/auth/get-profile",
-                   
+                    url: "/users/profile", 
                     
                 }
             },
-            transformResponse: ({user})=>{
-                return user;
-            }
+            
         }),
     })
 });

@@ -1,23 +1,24 @@
 import React from "react";
-import { FaUsers } from "react-icons/fa6";
+import { FaUsers } from "react-icons/fa6"; // Static icon import
+import { useSummaryQuery } from "../../redux/apiSlices/homeSlice"; // I assume you want to keep this for other purposes
 
 const HomeCard = () => {
-  // Data for cards
-  const cardData = [
-    { icon: FaUsers, value: "$5000", label: "Total Purchased" },
-    { icon: FaUsers, value: "200", label: "Total Completed Orders" },
-  ];
+  // Fetch the data if needed
+  const { data } = useSummaryQuery();
+  const cardData=data?.data
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 h-[120px] mb-9">
-      {cardData.map((data, index) => (
-        <SalesRepsCard
-          key={index}
-          icon={data.icon}
-          value={data.value}
-          label={data.label}
-        />
-      ))}
+      <SalesRepsCard
+        icon={FaUsers}
+        value={cardData?.totalPurchaseAmount}
+        label="Total Purchased"
+      />
+      <SalesRepsCard
+        icon={FaUsers}
+        value={cardData?.totalOrderCompleate}
+        label="Total Completed Orders"
+      />
     </div>
   );
 };
@@ -31,10 +32,12 @@ const SalesRepsCard = ({ icon: Icon, value, label }) => {
           <Icon color="#007BA5" size={40} />
         </div>
         <div className="flex flex-col gap-3">
-          <h3 className="text-white text-sm  lg:text-[32px] font-semibold">
+          <h3 className="text-white text-sm lg:text-[32px] font-semibold">
             {value}
           </h3>
-          <h2 className="text-white text-sm lg:text-center lg:text-base">{label}</h2>
+          <h2 className="text-white text-sm lg:text-center lg:text-base">
+            {label}
+          </h2>
         </div>
       </div>
     </div>

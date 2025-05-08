@@ -36,6 +36,7 @@ const onFinish = async (values) => {
     if (response.success) {
       message.success("Password has been reset successfully!");
       navigate("/auth/login"); 
+        localStorage.removeItem(verifyToken);
     } else {
       message.error(
         response.message || "Failed to reset password. Please try again."

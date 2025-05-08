@@ -1,20 +1,31 @@
-import React, { useState } from "react";
-import { Table, Button } from "antd";
+import React, { useState, useEffect } from "react";
+import { Table, Button, message, Input, Modal } from "antd";
 import { MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
-
-const initialProducts = Array.from({ length: 5 }, (_, index) => ({
-  key: Math.random().toString(),
-  sl: index + 1,
-  productName: `Product-${index + 1}`,
-  category: "Cigar",
-  inStock: "Yes",
-  productPrice: 200,
-  quantity: 50,
-}));
-
+import { useGetProductsQuery, useOrderProductMutation } from "../../redux/apiSlices/homeSlice";
 
 const OrderTable = () => {
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState([]);
+  const { data, isLoading: productsLoading } = useGetProductsQuery();
+  const [orderProduct, { isLoading }] = useOrderProductMutation();
+  const [shippingAddress, setShippingAddress] = useState("");
+  const [isAddressModalVisible, setIsAddressModalVisible] = useState(false);
+  
+  useEffect(() => {
+    if (data?.data) {
+      console.log("API Product Data:", data.data);
+      const formattedProducts = data.data.map((product, index) => ({
+        key: product._id || Math.random().toString(),
+        sl: index + 1,
+        productId: product._id,
+        productName: product.name || `Product-${index + 1}`,
+        category: product.category || "Cigar",
+        inStock: product.inStock ? "Yes" : "No",
+        productPrice: product.price || 200,
+        quantity: 0,
+      }));
+      setProducts(formattedProducts);
+    }
+  }, [data]);
 
   const updateQuantity = (index, delta) => {
     const newProducts = [...products];
@@ -29,6 +40,61 @@ const OrderTable = () => {
   );
 
   const totalBox = products.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handlePlaceOrder = async () => {
+    try {
+      const productsToOrder = products
+        .filter(item => item.quantity > 0)
+        .map(item => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          totalamout: item.quantity * item.productPrice,
+          price: item.productPrice
+        }));
+      
+      if (productsToOrder.length === 0) {
+        message.error("Please select at least one product");
+        return;
+      }
+
+      if (!shippingAddress.trim()) {
+        setIsAddressModalVisible(true);
+        return;
+      }
+
+      const orderData = {
+        products: productsToOrder,
+        source: "Retailer",
+        orderBoxs: totalBox,
+        totalAmount,
+        shippingAddress
+      };
+
+      console.log("Sending order data:", orderData);
+      await orderProduct(orderData).unwrap();
+      message.success("Order placed successfully");
+      
+      // Reset quantities after order
+      const resetProducts = products.map(product => ({
+        ...product,
+        quantity: 0
+      }));
+      setProducts(resetProducts);
+      setShippingAddress("");
+    } catch (error) {
+      message.error(`Failed to place order: ${error.message || "Unknown error"}`);
+      console.error("Order error:", error);
+    }
+  };
+
+  const handleAddressSubmit = () => {
+    if (!shippingAddress.trim()) {
+      message.error("Please enter a shipping address");
+      return;
+    }
+    setIsAddressModalVisible(false);
+    handlePlaceOrder();
+  };
 
   const columns = [
     {
@@ -73,6 +139,7 @@ const OrderTable = () => {
             icon={<MinusCircleOutlined />}
             onClick={() => updateQuantity(index, -1)}
             size="small"
+            disabled={products[index].quantity <= 0}
           />
           <span className="font-medium">{products[index].quantity}</span>
           <Button
@@ -100,6 +167,7 @@ const OrderTable = () => {
           dataSource={products}
           bordered
           rowClassName="bg-white rounded-lg"
+          loading={productsLoading}
         />
       </div>
 
@@ -108,14 +176,44 @@ const OrderTable = () => {
         <h2 className="mb-4 text-lg font-semibold text-white">Shopping Cart</h2>
         <div className="space-y-1 text-gray-700">
           <p className="text-white">Total Box: {totalBox}</p>
-          {/* <p>Free Box: 0</p> */}
           <p className="text-white">Total amount: ${totalAmount}</p>
         </div>
-        <div className="flex justify-between mt-4">
-          {/* <Button danger>Remove All</Button> */}
-          <Button type="primary" className="bg-third">Place Order</Button>
+        <div className="mt-4">
+          <Input.TextArea
+            placeholder="Enter shipping address"
+            value={shippingAddress}
+            onChange={(e) => setShippingAddress(e.target.value)}
+            className="mb-4"
+            rows={2}
+          />
+          <Button
+            type="primary"
+            className="bg-third w-full"
+            onClick={handlePlaceOrder}
+            loading={isLoading}
+            disabled={totalBox === 0}
+            style={{ color: totalBox === 0 ? "white" : "inherit" }}
+          >
+            Place Order
+          </Button>
         </div>
       </div>
+
+      {/* Address Modal */}
+      <Modal
+        title="Shipping Address Required"
+        open={isAddressModalVisible}
+        onOk={handleAddressSubmit}
+        onCancel={() => setIsAddressModalVisible(false)}
+      >
+        <p>Please enter your shipping address:</p>
+        <Input.TextArea
+          value={shippingAddress}
+          onChange={(e) => setShippingAddress(e.target.value)}
+          placeholder="Enter your complete shipping address"
+          rows={3}
+        />
+      </Modal>
     </div>
   );
 };

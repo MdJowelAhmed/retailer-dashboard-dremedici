@@ -1,19 +1,19 @@
 import { api } from "../api/baseApi";
 
-const homeSlice = api.injectEndpoints({
+const myOrderApi = api.injectEndpoints({
     endpoints: (builder)=>({
-        summary: builder.query({
+        myOrder: builder.query({
             query: ()=> {
                 return {
-                  url: `/retailer/dashboard/summary`,
+                  url: `/retailer/dashboard/orders`,
                   method: "GET",
                 };
             }
         }),
-        getProducts: builder.query({
-            query: ()=> {
+        orderDetails: builder.query({
+            query: (id)=> {
                 return {
-                  url: `/retailer/dashboard`,
+                  url: `/dashboard/orders/${id}`,
                   method: "GET",
                 };
             }
@@ -31,7 +31,7 @@ const homeSlice = api.injectEndpoints({
 })
 
 export const {
-    useSummaryQuery,
-    useGetProductsQuery,
+    useMyOrderQuery,
+    useOrderDetailsQuery,
     useOrderProductMutation
-} = homeSlice;
+} = myOrderApi;
