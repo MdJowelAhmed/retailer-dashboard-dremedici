@@ -31,6 +31,7 @@ import CommissionTracking from "../Pages/Dashboard/CommissionTracking";
 import Myorders from "../Pages/Dashboard/Myorders";
 import MyCart from "../Pages/Dashboard/MyCart";
 import Subscription from "../Pages/Dashboard/Subscription";
+import CreateAccount from "../Pages/Auth/CreateAccount";
 // import SalesRepsManagementTable from "../components/SalesRepsManagement/SalesRepsManagement";
 
 const router = createBrowserRouter([
@@ -129,6 +130,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />,
+      },
+      {
+        path: "create-account",
+        element: <CreateAccount />,
       },
       {
         path: "forgot-password",

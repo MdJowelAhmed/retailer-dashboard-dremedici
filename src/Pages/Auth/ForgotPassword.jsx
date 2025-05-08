@@ -1,19 +1,27 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useForgotPasswordMutation } from "../../redux/apiSlices/authSlice";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
+  const [form] = Form.useForm();
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation(); // Use isLoading from the hook
 
+  const onFinish = async (values) => {
+    
+    try {
+      const response = await forgotPassword({email:values.email}).unwrap();
+      console.log(response);
+      message.success("OTP sent to your email");
 
-  const onFinish = async(values) => {
-
-        navigate(`/auth/verify-otp?email=${values?.email}`);
-
+      navigate(`/auth/verify-otp?email=${values.email}&source=forgot`);
+    } catch (err) {
+      message.error(
+        err?.data?.message || "Failed to send OTP. Please try again."
+      );
+    }
   };
-
-
 
   return (
     <div>
@@ -24,7 +32,7 @@ const ForgotPassword = () => {
         </p>
       </div>
 
-      <Form layout="vertical" onFinish={onFinish}>
+      <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
           label={<p>Email</p>}
           name="email"
@@ -33,6 +41,10 @@ const ForgotPassword = () => {
             {
               required: true,
               message: "Please input your email!",
+            },
+            {
+              type: "email",
+              message: "Please enter a valid email!",
             },
           ]}
         >
@@ -48,22 +60,22 @@ const ForgotPassword = () => {
         </Form.Item>
 
         <Form.Item>
-          <button
+          <Button
             htmlType="submit"
-            type="submit"
+            type="primary"
+            loading={isLoading} 
             style={{
               width: "100%",
               height: 45,
               color: "white",
               fontWeight: "400px",
               fontSize: "18px",
-
               marginTop: 20,
             }}
-            className="flex items-center justify-center bg-gradient-to-r from-primary  to-secondary rounded-lg"
+            className="flex items-center justify-center bg-gradient-to-r from-primary to-secondary rounded-lg"
           >
             Send OTP
-          </button>
+          </Button>
         </Form.Item>
       </Form>
     </div>

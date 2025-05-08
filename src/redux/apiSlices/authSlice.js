@@ -6,7 +6,25 @@ const authSlice = api.injectEndpoints({
             query: (data) => {
                 return{
                     method: "POST",
-                    url: "/auth/otp-verify",
+                    url: "/auth/verify-email",
+                    body: data,
+                }
+            }
+        }),
+        resentOtp: builder.mutation({
+            query: (data) => {
+                return{
+                    method: "POST",
+                    url: "/auth/resend-otp",
+                    body: data,
+                }
+            }
+        }),
+        createAccount: builder.mutation({
+            query: (data) => {
+                return{
+                    method: "POST",
+                    url: "/users",
                     body: data,
                 }
             }
@@ -22,16 +40,13 @@ const authSlice = api.injectEndpoints({
             transformResponse: (data)=>{
                 return data;
             },
-            transformErrorResponse: ({data})=>{
-                const { message } = data;
-                return message;
-            }
+           
         }),
         forgotPassword: builder.mutation({
             query: (data) => {
                 return{
                     method: "POST",
-                    url: "/auth/forgot-password",
+                    url: "/auth/forget-password",
                     body: data
                 }
             }
@@ -41,8 +56,12 @@ const authSlice = api.injectEndpoints({
                 return{
                     method: "POST",
                     url: "/auth/reset-password",
-                    body: value
+                    body: value,
+                     headers: {
+          resetToken: localStorage.getItem("verifyToken"), 
+        },
                 }
+                
             }
         }),
         changePassword: builder.mutation({
@@ -51,9 +70,7 @@ const authSlice = api.injectEndpoints({
                     method: "POST",
                     url: "/auth/change-password",
                     body: data,
-                    headers:{
-                        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`
-                    }
+                   
                 }
             }
         }),
@@ -64,9 +81,7 @@ const authSlice = api.injectEndpoints({
                     method: "POST",
                     url: "/auth/update-profile",
                     body: data,
-                    headers:{
-                        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`
-                    }
+                   
                 }
             }
         }),
@@ -76,9 +91,7 @@ const authSlice = api.injectEndpoints({
                 return{
                     method: "GET",
                     url: "/auth/get-profile",
-                    headers:{
-                        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`
-                    },
+                   
                     
                 }
             },
@@ -91,7 +104,9 @@ const authSlice = api.injectEndpoints({
 
 export const {
     useOtpVerifyMutation,
+    useCreateAccountMutation,
     useLoginMutation,
+    useResentOtpMutation,
     useForgotPasswordMutation,
     useResetPasswordMutation,
     useChangePasswordMutation,
