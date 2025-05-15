@@ -4,6 +4,7 @@ import { StarFilled } from "@ant-design/icons";
 import { FaRegEdit } from "react-icons/fa";
 import GradientButton from "../common/GradiantButton";
 import PaymentModal from "./PaymentForm";
+import { useBuySubcriptionPackageMutation, useGetSubscriptionsQuery } from "../../redux/apiSlices/subscriptionPackage";
 
 const LoyaltyProgramTable = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -12,49 +13,45 @@ const LoyaltyProgramTable = () => {
   const [editingPlanId, setEditingPlanId] = useState(null);
   const [editedText, setEditedText] = useState("");
   const [agreements, setAgreements] = useState({});
-  const [subscriptionPlans, setSubscriptionPlans] = useState([
-    {
-      id: 1,
-      tier: "Silver Tier",
-      facilities: "Subscription : 3 boxes per month",
-      buttonColor: "#4E9DAB",
-      benefits: [
-        "Free Shipping – Included with subscription orders",
-        "No Credit Card Fee – No 3% fee on any order",
-        "Exclusive Products – Access to subscription-only items",
-        "Flash Discounts – Special exclusive offers",
-        "Limited Releases – Priority access with a larger allocation",
-      ],
-    },
-    {
-      id: 2,
-      tier: "Gold Tier",
-      facilities: "Gold Tier : 4 boxes per month + 1 free box per quarter",
-      buttonColor: "#379683",
-      benefits: [
-        "Free Shipping – Included with subscription orders",
-        "No Credit Card Fee – No 3% fee on any order",
-        "Exclusive Products – Access to subscription-only all items",
-        "Flash Discounts – Special exclusive offers",
-        "Limited Releases – Priority access with a larger allocation",
-      ],
-    },
-    {
-      id: 3,
-      tier: "Platinum Tier",
-      facilities:
-        "Platinum Tier : 5 boxes per month + 2 free boxes per quarter",
-      buttonColor: "#379754",
-      benefits: [
-        "Free Shipping – Included with subscription orders",
-        "No Credit Card Fee – No 3% fee on any order",
-        "Exclusive Products – Access to subscription-only items",
-        "Flash Discounts – Special exclusive offers",
-        "Limited Releases – Priority access with a larger allocation",
-      ],
-    },
-  ]);
+  const [subscriptionPlans, setSubscriptionPlans] = useState([]);
 
+  const { data } = useGetSubscriptionsQuery();
+  const packages = data?.data;
+  const [buySubcriptionPackage]=useBuySubcriptionPackageMutation()
+
+  useEffect(() => {
+    if (packages && packages.length > 0) {
+      const mappedPlans = packages.map((pkg) => {
+        // Map the button color based on subscription tier
+        let buttonColor = "#4E9DAB"; // Default (Silver)
+        if (pkg.subscription.includes("Gold")) {
+          buttonColor = "#379683";
+        } else if (pkg.subscription.includes("Platinum")) {
+          buttonColor = "#379754";
+        }
+
+        // Create benefits array from API data
+        const benefits = [
+          `Free Shipping – ${pkg.freeShipping}`,
+          `No Credit Card Fee – ${pkg.noCreditCardFee}`,
+          `Exclusive Products – ${pkg.exclusiveProducts}`,
+          `Flash Discounts – Special exclusive offers`,
+          `Limited Releases – ${pkg.limitedReleases}`,
+        ];
+
+        return {
+          id: pkg._id,
+          tier: pkg.subscription,
+          facilities: pkg.tier,
+          buttonColor,
+          benefits,
+        };
+      });
+
+      setSubscriptionPlans(mappedPlans);
+    }
+  }, [packages]);
+  
   const selectedPlan = subscriptionPlans.find(
     (plan) => plan.id === selectedPlanId
   );
@@ -62,7 +59,7 @@ const LoyaltyProgramTable = () => {
   useEffect(() => {
     const savedPlanId = localStorage.getItem("selectedPlanId");
     if (savedPlanId) {
-      setSelectedPlanId(parseInt(savedPlanId, 10));
+      setSelectedPlanId(savedPlanId);
     }
   }, []);
 
@@ -80,13 +77,55 @@ const LoyaltyProgramTable = () => {
     setIsModalVisible(false);
   };
 
-  const handleSubmitPayment = (values) => {
-    console.log("Payment details: ", values);
-    message.success("Payment confirmed successfully!");
-    localStorage.removeItem("selectedPlanId");
-    setSelectedPlanId(null);
-    setAgreements({});
-    handleCancel();
+  const handleSubmitPayment = async (values) => {
+    try {
+      // Get the selected plan details
+      const plan = subscriptionPlans.find(p => p.id === selectedPlanId);
+      
+      // Extract benefits data from plan
+      const freeShipping = plan.benefits[0].split('–')[1].trim();
+      const noCreditCardFee = plan.benefits[1].split('–')[1].trim();
+      const exclusiveProducts = plan.benefits[2].split('–')[1].trim();
+      const limitedReleases = plan.benefits[4].split('–')[1].trim();
+      
+      // Format the data according to the required structure
+      const paymentData = {
+        tier: plan.tier,
+        subscription: plan.tier,
+        freeShipping: freeShipping,
+        noCreditCardFee: noCreditCardFee,
+        exclusiveProducts: exclusiveProducts,
+        limitedReleases: limitedReleases,
+        termsAndConditionsAccepted: agreements[plan.id] || false,
+        termsAndConditions: "By subscribing, you agree to our terms and conditions...",
+        card: {
+          cardHolderName: values.cardHolderName,
+          cardNumber: values.cardNumber,
+          expiryDate: values.expiryDate,
+          cvv: values.cvv,
+          zipCode: values.zipCode
+        }
+      };
+      
+      console.log("Payment payload:", paymentData);
+      
+      // Call the mutation
+      const response = await buySubcriptionPackage(paymentData).unwrap();
+      
+      if (response?.success) {
+        // Handle success
+        message.success("Subscription payment confirmed successfully!");
+        localStorage.removeItem("selectedPlanId");
+        setSelectedPlanId(null);
+        setAgreements({});
+        handleCancel();
+      } else {
+        message.error(response?.message || "Payment failed. Please try again.");
+      }
+    } catch (error) {
+      message.error(error?.data?.message || "Payment failed. Please try again.");
+      console.error("Payment error:", error);
+    }
   };
 
   const startEditing = (plan) => {
@@ -178,8 +217,8 @@ const LoyaltyProgramTable = () => {
             style={{
               display: "flex",
               flexDirection: "column",
-              minHeight: "400px", // Increased min-height to keep the cards consistent
-              position: "relative", // To allow button placement at the bottom
+              minHeight: "400px", 
+              position: "relative", 
             }}
           >
             <div className="flex flex-col justify-center items-center mb-4">
@@ -189,7 +228,7 @@ const LoyaltyProgramTable = () => {
 
             {/* Conditional rendering for edit icon */}
             {editingPlanId !== plan.id && (
-              <div className="absolute right-2 top-2">
+              <div className="absolute right-5 top-34">
                 <FaRegEdit
                   size={20}
                   onClick={() => startEditing(plan)}
