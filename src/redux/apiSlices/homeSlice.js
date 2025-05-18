@@ -13,7 +13,7 @@ const homeSlice = api.injectEndpoints({
         getProducts: builder.query({
             query: ()=> {
                 return {
-                  url: `/retailer/dashboard`,
+                  url: `/retailer/dashboard/get-products`,
                   method: "GET",
                 };
             }

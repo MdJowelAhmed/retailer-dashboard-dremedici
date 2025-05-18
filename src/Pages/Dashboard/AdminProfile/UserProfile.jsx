@@ -1,270 +1,262 @@
 import React, { useState, useEffect } from "react";
-import {
-  Form,
-  Input,
-  Button,
-  Switch,
-  Select,
-  notification,
-  Upload,
-  Avatar,
-} from "antd";
-import GradientButton from "../../../components/common/GradiantButton";
+import { Form, Input, Button, Upload, Avatar, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import {
-  useProfileQuery,
-  useUpdateProfileMutation,
-} from "../../../redux/apiSlices/authSlice";
-
-const { Option } = Select;
+import { useProfileQuery, useUpdateProfileMutation } from "../../../redux/apiSlices/authSlice";
+import { getImageUrl } from "../../../components/common/imageUrl";
 
 const UserProfile = () => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
   const [fileList, setFileList] = useState([]);
-  const { data, isSuccess } = useProfileQuery();
-  const [updateProfile, { isLoading }] = useUpdateProfileMutation();
+  const [imageFile, setImageFile] = useState(null);
+  const { data } = useProfileQuery();
+  const [updateProfile] = useUpdateProfileMutation();
+  // console.log(data)
+
+  const user = data?.data;
 
   useEffect(() => {
-    if (isSuccess && data?.data) {
-      console.log("Setting form values with:", data.data);
-      // Populate form with user data
+    if (user) {
       form.setFieldsValue({
-        username: data.data.name,
-        email: data.data.email,
-        address: data.data.address || "",
-        language: data.data.language || "english",
-        notifications: data.data.notifications || true,
+        name: user.name,
+        email: user.email,
+        address: user.address,
+        phone: user.phone || "",
       });
 
-      // Set profile image if exists
-      if (data.data.image) {
-        setImageUrl(data.data.image);
+      // Set the image URL if it exists
+      if (user.image) {
+        setImageUrl(user.image);
+        setFileList([
+          {
+            uid: "-1",
+            name: "profile.jpg",
+            status: "done",
+            url: user.image,
+          },
+        ]);
       }
     }
-  }, [isSuccess, data, form]);
+  }, [form, user]);
 
-  const handleUpdate = async (values) => {
-    console.log("Handle update triggered with values:", values);
-    try {
-      // Create user data object
-      const userData = {
-        name: values.username,
-        email: values.email,
-        address: values.address,
-        language: values.language,
-        notifications: values.notifications,
-      };
+  // Clean up blob URLs when component unmounts to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (imageUrl && imageUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(imageUrl);
+      }
+    };
+  }, [imageUrl]);
 
-      console.log("User data:", userData);
+  const handleImageChange = (info) => {
+    const limitedFileList = info.fileList.slice(-1);
+    setFileList(limitedFileList);
 
-      // Create FormData only if there's an image
-      if (fileList.length > 0 && fileList[0].originFileObj) {
-        const formData = new FormData();
-        formData.append("image", fileList[0].originFileObj);
+    if (limitedFileList.length > 0 && limitedFileList[0].originFileObj) {
+      setImageFile(limitedFileList[0].originFileObj);
 
-        // Add all user data as individual form fields (not as stringified JSON)
-        Object.keys(userData).forEach((key) => {
-          formData.append(key, userData[key]);
-        });
+      const newImageUrl = URL.createObjectURL(limitedFileList[0].originFileObj);
 
-        console.log("Calling updateProfile mutation with FormData");
-        const response = await updateProfile(formData).unwrap();
-        console.log("Update response:", response);
-      } else {
-        // If no image, just send the JSON data
-        console.log("Calling updateProfile mutation with JSON");
-        const response = await updateProfile(userData).unwrap();
-        console.log("Update response:", response);
+      if (imageUrl && imageUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(imageUrl);
       }
 
-      notification.success({
-        message: "Profile Updated Successfully!",
-        description: "Your profile information has been updated.",
-      });
-    } catch (error) {
-      console.error("Profile update error:", error);
-      notification.error({
-        message: "Update Failed",
-        description:
-          error.message || "Failed to update profile. Please try again.",
-      });
-    }
-  };
-
-  const handleImageChange = ({ fileList: newFileList }) => {
-    setFileList(newFileList); // Update the file list when a new file is selected
-    if (newFileList.length > 0) {
-      setImageUrl(URL.createObjectURL(newFileList[0].originFileObj)); // Show preview of the image
+      setImageUrl(newImageUrl);
     } else {
-      setImageUrl(null); // Clear image if no file selected
+      setImageFile(null);
+      setImageUrl(null);
     }
   };
 
   const beforeUpload = (file) => {
     const isImage = file.type.startsWith("image/");
     if (!isImage) {
-      notification.error({
-        message: "Invalid File Type",
-        description: "Please upload an image file.",
-      });
+      message.error("Please upload an image file.");
     }
-    return isImage;
+
+    // Check file size (optional)
+    const isLessThan2MB = file.size / 1024 / 1024 < 2;
+    if (!isLessThan2MB) {
+      message.error("Image must be smaller than 2MB.");
+    }
+
+    return false; // Return false to prevent auto upload
   };
 
-  // For debugging purposes
-  const logFormStatus = () => {
-    console.log("Form is valid:", form.isFieldsValidating());
-    console.log("Form values:", form.getFieldsValue());
+  const onFinish = async (values) => {
+    try {
+      // Create user data object
+      const userData = {
+        name: values.name,
+        email: values.email,
+        address: values.address,
+        phone: values.phone || "",
+      };
+
+      // Create a new FormData object to send to backend
+      const formDataToSend = new FormData();
+
+      // Append user data as a JSON string
+      formDataToSend.append("data", JSON.stringify(userData));
+
+      // Check if image exists and append it to FormData
+      if (imageFile) {
+        formDataToSend.append("image", imageFile);
+      }
+
+      // Send the FormData to the backend using your existing mutation
+      const response = await updateProfile(formDataToSend).unwrap();
+
+      if (response.success) {
+        message.success("Profile updated successfully!");
+
+        // Update token if returned in the response
+        if (response.token) {
+          localStorage.setItem("accessToken", response.token);
+        }
+      } else {
+        message.error(response.message || "Failed to update profile!");
+      }
+    } catch (error) {
+      console.error("Profile update error:", error);
+      message.error(
+        error.data?.message || "An error occurred while updating the profile"
+      );
+    }
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <div className="flex items-center justify-center">
-        <Form
-          form={form}
-          layout="vertical"
-          style={{ width: "80%" }}
-          onFinish={handleUpdate}
-          onFinishFailed={(errorInfo) => {
-            console.log("Form validation failed:", errorInfo);
-          }}
-        >
-          <div className="grid w-full grid-cols-1 lg:grid-cols-2 lg:gap-x-16 gap-y-7">
-            {/* Profile Image */}
-            <div className="flex justify-center col-span-2">
-              <Form.Item label="Profile Image" style={{ marginBottom: 0 }}>
-                <Upload
-                  name="avatar"
-                  showUploadList={false}
-                  customRequest={({ onSuccess }) =>
-                    setTimeout(() => onSuccess("ok"), 0)
-                  }
-                  onChange={handleImageChange}
-                  beforeUpload={beforeUpload}
-                  fileList={fileList}
-                  listType="picture-card"
-                >
-                  {imageUrl ? (
-                    <Avatar size={100} src={imageUrl} />
-                  ) : (
-                    <Avatar size={100} icon={<UploadOutlined />} />
-                  )}
-                </Upload>
-              </Form.Item>
-            </div>
-
-            {/* Username */}
-            <Form.Item
-              name="username"
-              label="Username"
-              style={{ marginBottom: 0 }}
-              rules={[
-                { required: true, message: "Please enter your username" },
-              ]}
-            >
-              <Input
-                placeholder="Enter your Username"
-                style={{
-                  height: "45px",
-                  backgroundColor: "#f7f7f7",
-                  borderRadius: "8px",
-                  border: "1px solid #E0E4EC",
-                  outline: "none",
-                }}
-              />
-            </Form.Item>
-
-            {/* Email */}
-            <Form.Item
-              name="email"
-              label="Email"
-              style={{ marginBottom: 0 }}
-              rules={[
-                { required: true, message: "Please enter your email" },
-                { type: "email", message: "Please enter a valid email" },
-              ]}
-            >
-              <Input
-                placeholder="Enter your Email"
-                style={{
-                  height: "45px",
-                  backgroundColor: "#f7f7f7",
-                  borderRadius: "8px",
-                  border: "1px solid #E0E4EC",
-                  outline: "none",
-                }}
-              />
-            </Form.Item>
-
-            {/* Address */}
-            <Form.Item
-              name="address"
-              label="Address"
-              style={{ marginBottom: 0 }}
-              rules={[{ required: true, message: "Please enter your address" }]}
-            >
-              <Input
-                placeholder="Enter your Address"
-                style={{
-                  height: "45px",
-                  backgroundColor: "#f7f7f7",
-                  borderRadius: "8px",
-                  border: "1px solid #E0E4EC",
-                  outline: "none",
-                }}
-              />
-            </Form.Item>
-
-            {/* Language */}
-            <Form.Item
-              name="language"
-              label="Language"
-              style={{ marginBottom: 0 }}
-              rules={[
-                { required: true, message: "Please select your language" },
-              ]}
-            >
-              <Select
-                placeholder="Select your Language"
-                style={{
-                  height: "45px",
-                  backgroundColor: "#f7f7f7",
-                  borderRadius: "8px",
-                  border: "1px solid #E0E4EC",
-                }}
+    <div className="flex items-center bg-white justify-center rounded-lg shadow-xl pt-5">
+      <Form
+        form={form}
+        layout="vertical"
+        style={{ width: "80%" }}
+        onFinish={onFinish}
+      >
+        <div className="grid w-full grid-cols-1 lg:grid-cols-2 lg:gap-x-16 gap-y-7">
+          {/* Profile Image */}
+          <div className="flex justify-center col-span-2">
+            <Form.Item label="Profile Image" style={{ marginBottom: 0 }}>
+              <Upload
+                name="avatar"
+                showUploadList={false}
+                beforeUpload={beforeUpload}
+                onChange={handleImageChange}
+                fileList={fileList}
+                accept="image/*"
               >
-                <Option value="english">English</Option>
-                <Option value="french">French</Option>
-                <Option value="spanish">Spanish</Option>
-              </Select>
+                {imageUrl ? (
+                  <div>
+                    <img
+                      src={
+                        imageUrl.startsWith("blob:")
+                          ? imageUrl
+                          : getImageUrl(imageUrl)
+                      }
+                      alt="Profile"
+                      style={{
+                        width: 100,
+                        height: 100,
+                        objectFit: "cover",
+                        borderRadius: "50%",
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <Avatar size={100} icon={<UploadOutlined />} />
+                )}
+              </Upload>
             </Form.Item>
-
-            <Form.Item
-              name="notifications"
-              label="Enable Notifications"
-              valuePropName="checked"
-              style={{ marginBottom: 0, background: "white" }}
-            >
-              <Switch defaultChecked className="custom-switch" />
-            </Form.Item>
-
-            {/* Update Profile Button */}
-            <div className="mt-6 text-end col-span-2">
-              <Form.Item>
-                <GradientButton
-                  htmlType="submit"
-                  block
-                  loading={isLoading}
-                  onClick={logFormStatus}
-                >
-                  Update Profile
-                </GradientButton>
-              </Form.Item>
-            </div>
           </div>
-        </Form>
-      </div>
+
+          {/* Name */}
+          <Form.Item
+            name="name"
+            label="Name"
+            style={{ marginBottom: 0 }}
+            rules={[{ required: true, message: "Please enter your name" }]}
+          >
+            <Input
+              placeholder="Enter your Name"
+              style={{
+                height: "45px",
+                backgroundColor: "#f7f7f7",
+                borderRadius: "8px",
+                outline: "none",
+              }}
+            />
+          </Form.Item>
+
+          {/* Email (Disabled) */}
+          <Form.Item
+            name="email"
+            label="Email"
+            style={{ marginBottom: 0 }}
+            rules={[
+              { required: true, message: "Please enter your email" },
+              { type: "email", message: "Please enter a valid email" },
+            ]}
+          >
+            <Input
+              placeholder="Enter your Email"
+              style={{
+                height: "45px",
+                backgroundColor: "#f7f7f7",
+                borderRadius: "8px",
+                border: "1px solid #E0E4EC",
+                outline: "none",
+              }}
+              disabled // Disable the email field
+            />
+          </Form.Item>
+
+          {/* Address */}
+          <Form.Item
+            name="address"
+            label="Address"
+            style={{ marginBottom: 0 }}
+            rules={[{ required: true, message: "Please enter your address" }]}
+          >
+            <Input
+              placeholder="Enter your Address"
+              style={{
+                height: "45px",
+                backgroundColor: "#f7f7f7",
+                borderRadius: "8px",
+                outline: "none",
+              }}
+            />
+          </Form.Item>
+
+          {/* Phone */}
+          <Form.Item name="phone" label="Phone" style={{ marginBottom: 0 }}>
+            <Input
+              placeholder="Enter your Phone Number"
+              style={{
+                height: "45px",
+                backgroundColor: "#f7f7f7",
+                borderRadius: "8px",
+                outline: "none",
+              }}
+            />
+          </Form.Item>
+
+          {/* Update Profile Button */}
+          <div className="col-span-2 mt-6 text-end">
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                style={{ height: 48 }}
+                className="text-white rounded-md bg-primary hover:bg-primary"
+              >
+                Update Profile
+              </Button>
+            </Form.Item>
+          </div>
+        </div>
+      </Form>
     </div>
   );
 };

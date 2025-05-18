@@ -5,6 +5,7 @@ import { FaRegEdit } from "react-icons/fa";
 import GradientButton from "../common/GradiantButton";
 import PaymentModal from "./PaymentForm";
 import { useBuySubcriptionPackageMutation, useGetSubscriptionsQuery } from "../../redux/apiSlices/subscriptionPackage";
+import { useGetSettingQuery } from "../../redux/apiSlices/setting";
 
 const LoyaltyProgramTable = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -17,7 +18,17 @@ const LoyaltyProgramTable = () => {
 
   const { data } = useGetSubscriptionsQuery();
   const packages = data?.data;
-  const [buySubcriptionPackage]=useBuySubcriptionPackageMutation()
+  const [buySubcriptionPackage] = useBuySubcriptionPackageMutation()
+  console.log(subscriptionPlans)
+
+  const { data: settingData, isLoading: loadingTerms } = useGetSettingQuery();
+  const [termsModalVisible, setTermsModalVisible] = useState(false);
+
+  const termsAndConditions = settingData?.packageService || "";
+
+  // Show Terms modal
+  const showTermsModal = () => setTermsModalVisible(true);
+  const closeTermsModal = () => setTermsModalVisible(false);
 
   useEffect(() => {
     if (packages && packages.length > 0) {
@@ -91,20 +102,21 @@ const LoyaltyProgramTable = () => {
       // Format the data according to the required structure
       const paymentData = {
         tier: plan.tier,
-        subscription: plan.tier,
+        subscription: plan.facilities,
         freeShipping: freeShipping,
         noCreditCardFee: noCreditCardFee,
         exclusiveProducts: exclusiveProducts,
         limitedReleases: limitedReleases,
         termsAndConditionsAccepted: agreements[plan.id] || false,
-        termsAndConditions: "By subscribing, you agree to our terms and conditions...",
+        termsAndConditions:
+          "By subscribing, you agree to our terms and conditions...",
         card: {
           cardHolderName: values.cardHolderName,
           cardNumber: values.cardNumber,
           expiryDate: values.expiryDate,
           cvv: values.cvv,
-          zipCode: values.zipCode
-        }
+          zipCode: values.zipCode,
+        },
       };
       
       console.log("Payment payload:", paymentData);
@@ -162,39 +174,13 @@ const LoyaltyProgramTable = () => {
     }));
   };
 
-  const showTermsModal = () => {
-    setIsTermsModalVisible(true);
-  };
+ 
 
   const handleTermsModalCancel = () => {
     setIsTermsModalVisible(false);
   };
 
-  const termsAndConditions = `
-  # Terms and Conditions
-  
-  ## Subscription Agreement
-  
-  1. **Billing Cycle**: Your subscription will be billed automatically on a monthly basis.
-  
-  2. **Cancellation Policy**: You may cancel your subscription at any time. Cancellations will take effect at the end of your current billing cycle.
-  
-  3. **Delivery**: We aim to deliver your boxes within 3-5 business days of your billing date.
-  
-  4. **Box Contents**: The contents of each box are curated by our team and may vary. All items are final sale.
-  
-  5. **Free Boxes**: Free boxes for Gold and Platinum tiers will be delivered with your regular subscription in the final month of each quarter.
-  
-  6. **Shipping Policy**: Free shipping applies to all subscription orders. Additional purchases outside of your subscription may incur shipping fees.
-  
-  7. **Credit Card Fees**: Subscription orders are exempt from the standard 3% credit card processing fee.
-  
-  8. **Exclusive Access**: Subscription members will receive early access to limited releases and exclusive products.
-  
-  9. **Flash Discounts**: Special offers will be communicated via email to all active subscribers.
-  
-  10. **Changes to Terms**: We reserve the right to modify these terms and conditions at any time with notice to subscribers.
-  `;
+ 
 
   const renderPlanIcon = (tier) => {
     return (
@@ -217,8 +203,8 @@ const LoyaltyProgramTable = () => {
             style={{
               display: "flex",
               flexDirection: "column",
-              minHeight: "400px", 
-              position: "relative", 
+              minHeight: "400px",
+              position: "relative",
             }}
           >
             <div className="flex flex-col justify-center items-center mb-4">
@@ -314,20 +300,25 @@ const LoyaltyProgramTable = () => {
       {/* Terms Modal */}
       <Modal
         title="Terms and Conditions"
-        visible={isTermsModalVisible}
-        onCancel={handleTermsModalCancel}
+        visible={termsModalVisible}
+        onCancel={closeTermsModal}
         footer={[
-          <Button key="back" onClick={handleTermsModalCancel}>
+          <Button key="close" onClick={closeTermsModal}>
             Close
           </Button>,
         ]}
         width={700}
       >
-        <div className="p-4 max-h-96 overflow-y-auto">
-          <pre className="whitespace-pre-wrap font-sans text-sm">
-            {termsAndConditions}
-          </pre>
-        </div>
+        {loadingTerms ? (
+          <p>Loading terms & conditions...</p>
+        ) : (
+          <div
+            className="max-h-[500px] overflow-y-auto prose"
+            style={{ scrollbarWidth: "thin", scrollbarColor: "#888 #eee" }}
+          >
+            <div dangerouslySetInnerHTML={{ __html: termsAndConditions }} />
+          </div>
+        )}
       </Modal>
     </div>
   );

@@ -16,11 +16,11 @@ const AdminProfile = () => {
       label: "Change Password",
       children: <ChangePassword />,
     },
-       {
-        key: "3",
-        label: "Payment Method",
-        children: <Payment />,
-      },
+      //  {
+      //   key: "3",
+      //   label: "Payment Method",
+      //   children: <Payment />,
+      // },
     
   ];
 

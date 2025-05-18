@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, message, Input, Modal } from "antd";
 import { MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { useGetProductsQuery, useOrderProductMutation } from "../../redux/apiSlices/homeSlice";
+import {
+  useGetProductsQuery,
+  useOrderProductMutation,
+} from "../../redux/apiSlices/homeSlice";
 
 const OrderTable = () => {
   const [products, setProducts] = useState([]);
@@ -9,17 +12,17 @@ const OrderTable = () => {
   const [orderProduct, { isLoading }] = useOrderProductMutation();
   const [shippingAddress, setShippingAddress] = useState("");
   const [isAddressModalVisible, setIsAddressModalVisible] = useState(false);
-  
+
   useEffect(() => {
     if (data?.data) {
-      console.log("API Product Data:", data.data);
       const formattedProducts = data.data.map((product, index) => ({
         key: product._id || Math.random().toString(),
         sl: index + 1,
         productId: product._id,
-        productName: product.name || `Product-${index + 1}`,
+        name: product.name || `Product-${index + 1}`,
         category: product.category || "Cigar",
-        inStock: product.inStock ? "Yes" : "No",
+        inStockCount: product.quantity || 0,
+        availableStock: product.quantity || 0, // Added new field to track remaining stock
         productPrice: product.price || 200,
         quantity: 0,
       }));
@@ -29,8 +32,34 @@ const OrderTable = () => {
 
   const updateQuantity = (index, delta) => {
     const newProducts = [...products];
-    const newQty = newProducts[index].quantity + delta;
-    newProducts[index].quantity = newQty < 0 ? 0 : newQty;
+    const currentProduct = newProducts[index];
+
+    // Calculate new quantity and ensure it's not negative
+    const newQty = currentProduct.quantity + delta;
+
+    if (delta > 0) {
+      // When increasing quantity, check available stock
+      if (currentProduct.availableStock <= 0) {
+        message.warning(`No more stock available for ${currentProduct.name}`);
+        return;
+      }
+    }
+
+    if (newQty < 0) {
+      // Don't allow negative quantities
+      currentProduct.quantity = 0;
+    } else if (newQty > currentProduct.inStockCount) {
+      // Don't allow ordering more than initial stock
+      message.warning(
+        `Cannot order more than available stock (${currentProduct.inStockCount})`
+      );
+      return;
+    } else {
+      // Update quantity and available stock
+      currentProduct.quantity = newQty;
+      currentProduct.availableStock = currentProduct.inStockCount - newQty;
+    }
+
     setProducts(newProducts);
   };
 
@@ -44,14 +73,15 @@ const OrderTable = () => {
   const handlePlaceOrder = async () => {
     try {
       const productsToOrder = products
-        .filter(item => item.quantity > 0)
-        .map(item => ({
+        .filter((item) => item.quantity > 0)
+        .map((item) => ({
           productId: item.productId,
           quantity: item.quantity,
-          totalamout: item.quantity * item.productPrice,
-          price: item.productPrice
+          name: item.name,
+          totalAmount: item.quantity * item.productPrice,
+          price: item.productPrice,
         }));
-      
+
       if (productsToOrder.length === 0) {
         message.error("Please select at least one product");
         return;
@@ -67,22 +97,25 @@ const OrderTable = () => {
         source: "Retailer",
         orderBoxs: totalBox,
         totalAmount,
-        shippingAddress
+        shippingAddress,
       };
 
       console.log("Sending order data:", orderData);
       await orderProduct(orderData).unwrap();
       message.success("Order placed successfully");
-      
+
       // Reset quantities after order
-      const resetProducts = products.map(product => ({
+      const resetProducts = products.map((product) => ({
         ...product,
-        quantity: 0
+        quantity: 0,
+        availableStock: product.inStockCount, // Reset available stock to original value
       }));
       setProducts(resetProducts);
       setShippingAddress("");
     } catch (error) {
-      message.error(`Failed to place order: ${error.message || "Unknown error"}`);
+      message.error(
+        `Failed to place order: ${error.message || "Unknown error"}`
+      );
       console.error("Order error:", error);
     }
   };
@@ -106,8 +139,8 @@ const OrderTable = () => {
     },
     {
       title: "Product Name",
-      dataIndex: "productName",
-      key: "productName",
+      dataIndex: "name",
+      key: "name",
       align: "center",
     },
     {
@@ -117,9 +150,9 @@ const OrderTable = () => {
       align: "center",
     },
     {
-      title: "In Stock",
-      dataIndex: "inStock",
-      key: "inStock",
+      title: "Available Stock",
+      dataIndex: "availableStock", // Changed to show dynamic available stock
+      key: "availableStock",
       align: "center",
     },
     {
@@ -133,7 +166,7 @@ const OrderTable = () => {
       title: "Quantity",
       key: "quantity",
       align: "center",
-      render: (_, __, index) => (
+      render: (_, record, index) => (
         <div className="flex items-center justify-center gap-2">
           <Button
             icon={<MinusCircleOutlined />}
@@ -141,11 +174,12 @@ const OrderTable = () => {
             size="small"
             disabled={products[index].quantity <= 0}
           />
-          <span className="font-medium">{products[index].quantity}</span>
+          <span className="font-medium">{record.quantity}</span>
           <Button
             icon={<PlusCircleOutlined />}
             onClick={() => updateQuantity(index, 1)}
             size="small"
+            disabled={record.availableStock <= 0} // Disable when no more stock available
           />
         </div>
       ),

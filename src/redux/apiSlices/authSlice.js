@@ -66,33 +66,30 @@ const authSlice = api.injectEndpoints({
         }),
         changePassword: builder.mutation({
             query: (data) => {
-                return{
-                    method: "POST",
-                    url: "/auth/change-password",
-                    body: data,
-                   
-                }
+                return {
+                  method: "POST",
+                  url: "/auth/change-password",
+                  body: data,
+                };
             }
         }),
 
         updateProfile: builder.mutation({
             query: (data) => {
-                return{
-                    method: "POST",
-                    url: "/auth/update-profile",
-                    body: data,
-                   
-                }
+                return {
+                  method: "PATCH",
+                  url: "/users/profile",
+                  body: data,
+                };
             }
         }),
 
         profile: builder.query({
             query: () => {
-                return{
-                    method: "GET",
-                    url: "/users/profile", 
-                    
-                }
+                return {
+                  method: "GET",
+                  url: "/users/profile",
+                };
             },
             
         }),
