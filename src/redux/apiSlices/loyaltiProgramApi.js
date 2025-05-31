@@ -29,6 +29,14 @@ const loyaltiProgramApi = api.injectEndpoints({
         };
       },
     }),
+    getReedemButton: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/retailer/redeem/${id}`,
+          method: "Post",
+        };
+      },
+    }),
     orderProduct: builder.mutation({
       query: (data) => {
         return {
@@ -44,5 +52,6 @@ const loyaltiProgramApi = api.injectEndpoints({
 export const {
     useLoyaltiProgramQuery,
     useOrderDetailsQuery,
-    useOrderProductMutation
+  useOrderProductMutation,
+    useGetReedemButtonMutation,
 } = loyaltiProgramApi;

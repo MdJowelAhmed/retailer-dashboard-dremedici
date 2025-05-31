@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Gift,
   Package,
@@ -11,12 +11,20 @@ import {
   CheckCircle,
   Clock,
   Lock,
+  Loader2,
 } from "lucide-react";
-import { useLoyaltiProgramQuery } from "../../redux/apiSlices/loyaltiProgramApi";
+import {
+  useLoyaltiProgramQuery,
+  useGetReedemButtonMutation,
+} from "../../redux/apiSlices/loyaltiProgramApi";
 import Spinner from "../../components/common/Spinner";
 
 const LoyaltyProgram = () => {
-  const { data, isLoading } = useLoyaltiProgramQuery();
+  const { data, isLoading, refetch } = useLoyaltiProgramQuery();
+  const [getReedemButton, { isLoading: isRedeeming }] =
+    useGetReedemButtonMutation();
+  const [redeemingId, setRedeemingId] = useState(null);
+
   console.log(data);
 
   // Use a generic icon mapping function
@@ -40,11 +48,33 @@ const LoyaltyProgram = () => {
     }
   };
 
+  // Function to handle reward redemption
+  const handleRedeemReward = async (rewardId) => {
+    try {
+      setRedeemingId(rewardId);
+      const result = await getReedemButton(rewardId).unwrap();
+
+      // Show success message or handle success
+      console.log("Reward redeemed successfully:", result);
+
+      // Refetch the loyalty data to update the UI
+      refetch();
+    } catch (error) {
+      console.error("Failed to redeem reward:", error);
+      // Handle error - show toast notification, etc.
+    } finally {
+      setRedeemingId(null);
+    }
+  };
+
   // Function to determine reward status
   const getRewardStatus = (reward, currentSpend, redeemedRewards) => {
-    const isRedeemed = redeemedRewards.some(
-      (redeemedReward) => redeemedReward._id === reward._id
-    );
+    // Check if reward is redeemed (either from API response or isRedeemed flag)
+    const isRedeemed =
+      reward.isRedeemed ||
+      redeemedRewards.some(
+        (redeemedReward) => redeemedReward._id === reward._id
+      );
 
     if (isRedeemed) {
       return { status: "completed", label: "Completed", color: "bg-green-500" };
@@ -61,6 +91,7 @@ const LoyaltyProgram = () => {
     const currentRunningReward = sortedRewards.find(
       (r) =>
         currentSpend < r.target &&
+        !r.isRedeemed &&
         !redeemedRewards.some((red) => red._id === r._id)
     );
 
@@ -83,6 +114,7 @@ const LoyaltyProgram = () => {
     return sortedRewards.find(
       (reward) =>
         currentSpend < reward.target &&
+        !reward.isRedeemed &&
         !redeemedRewards.some((red) => red._id === reward._id)
     );
   };
@@ -306,24 +338,36 @@ const LoyaltyProgram = () => {
                         {rewardStatus.label}
                       </span>
                       <button
-                        className={`px-4 py-2 rounded-lg text-white font-medium text-sm transition-all duration-200 ${
-                          isAvailable
+                        className={`px-4 py-2 rounded-lg text-white font-medium text-sm transition-all duration-200 flex items-center gap-2 ${
+                          isAvailable && !isRedeeming
                             ? "bg-[#6200EE] hover:bg-[#5200CC] transform hover:scale-105"
                             : isCompleted
                             ? "bg-green-500 cursor-not-allowed"
                             : "bg-gray-400 cursor-not-allowed"
                         }`}
-                        disabled={!isAvailable}
+                        disabled={!isAvailable || isRedeeming}
+                        onClick={() =>
+                          isAvailable && handleRedeemReward(reward._id)
+                        }
                       >
-                        {isCompleted
-                          ? "Completed"
-                          : isAvailable
-                          ? "Redeem Now"
-                          : isRunning
-                          ? `${(
-                              reward.target - currentSpend
-                            ).toLocaleString()} more`
-                          : "Locked"}
+                        {redeemingId === reward._id ? (
+                          <>
+                            <Loader2 size={16} className="animate-spin" />
+                            Redeeming...
+                          </>
+                        ) : (
+                          <>
+                            {isCompleted
+                              ? "Completed"
+                              : isAvailable
+                              ? "Redeem Now"
+                              : isRunning
+                              ? `${(
+                                  reward.target - currentSpend
+                                ).toLocaleString()} more`
+                              : "Locked"}
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>
