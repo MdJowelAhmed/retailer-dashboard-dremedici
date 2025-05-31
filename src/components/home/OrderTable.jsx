@@ -5,6 +5,7 @@ import {
   useGetProductsQuery,
   useOrderProductMutation,
 } from "../../redux/apiSlices/homeSlice";
+import Spinner from "../common/Spinner";
 
 const OrderTable = () => {
   const [products, setProducts] = useState([]);
@@ -15,7 +16,7 @@ const OrderTable = () => {
     queryParams.length > 0 ? queryParams : null
   );
   const [orderProduct, { isLoading }] = useOrderProductMutation();
-  console.log(data)
+  console.log(data);
 
   // Update query parameters whenever pagination changes
   useEffect(() => {
@@ -201,6 +202,10 @@ const OrderTable = () => {
     },
   ];
 
+  if (isLoading) {
+    return <Spinner />;
+  }
+
   return (
     <div>
       <div className="p-4 overflow-hidden bg-gradient-to-r from-primary to-secondary rounded-xl">
@@ -218,6 +223,7 @@ const OrderTable = () => {
           loading={productsLoading}
         />
       </div>
+      
 
       <div className="w-full p-6 mt-8 ml-auto shadow-lg md:w-96 bg-primary rounded-xl">
         <h2 className="mb-4 text-lg font-semibold text-white">Shopping Cart</h2>
