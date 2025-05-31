@@ -28,17 +28,20 @@ import ViewSalesReps from "../components/SalesRepsManagement/detailsSalesReps/Vi
 import Products from "../Pages/Dashboard/Products";
 import LoyaltyProgram from "../Pages/Dashboard/LoyaltyProgram";
 import CommissionTracking from "../Pages/Dashboard/CommissionTracking";
-import Myorders from "../Pages/Dashboard/Myorders";
 import MyCart from "../Pages/Dashboard/MyCart";
 import Subscription from "../Pages/Dashboard/Subscription";
 import CreateAccount from "../Pages/Auth/CreateAccount";
+import PrivateRoute from "./ProtectedRoute";
+import Myorders from "../Pages/Dashboard/MyOrders";
 // import SalesRepsManagementTable from "../components/SalesRepsManagement/SalesRepsManagement";
 
 const router = createBrowserRouter([
   {
     path: "/",
     // element: <ProtectedRoute><Main /></ProtectedRoute> ,
-    element: <Main />,
+    element: <PrivateRoute >
+       <Main />
+    </PrivateRoute>,
     children: [
       {
         path: "/",

@@ -8,18 +8,19 @@ const { Title, Text, Link } = Typography;
 
 export default function CreateAccount() {
   const [form] = Form.useForm();
-  const [userType, setUserType] = useState("retailer");
+  const [userType, setUserType] = useState();
   const [createAccount, { isLoading }] = useCreateAccountMutation();
 
   const navigate = useNavigate();
 
   const handleSubmit = async (values) => {
-    const { name, email, password } = values;
+    const { name, email, password, address } = values;
 
     const accountData = {
       name,
       email,
       password,
+      address, // Include address in the data sent to the server
       role: userType === "retailer" ? "RETAILER" : "SALES",
     };
 
@@ -43,7 +44,7 @@ export default function CreateAccount() {
 
   return (
     <div className="flex justify-center items-center">
-      <Card className="w-full max-w-md rounded-lg shadow-md border-slate-200">
+      <Card className="w-full max-w-lg rounded-lg ">
         <Title level={2} className="text-center mb-6">
           Create an account
         </Title>
@@ -63,6 +64,7 @@ export default function CreateAccount() {
               </span>
             }
             rules={[{ required: true, message: "Please input your name!" }]}
+            className="mb-2"
           >
             <Input
               placeholder="Enter your name"
@@ -81,10 +83,28 @@ export default function CreateAccount() {
               { required: true, message: "Please input your email!" },
               { type: "email", message: "Please enter a valid email!" },
             ]}
+            className="mb-2"
           >
             <Input
               placeholder="Enter your email"
               className="rounded py-2 px-3"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="address"
+            label={
+              <span className="font-medium">
+                Address<span className="text-red-500">*</span>
+              </span>
+            }
+            rules={[{ required: true, message: "Please input your address!" }]}
+            className="mb-2"
+          >
+            <Input.TextArea
+              placeholder="Enter your full address"
+              className="rounded py-2 px-3"
+              rows={3}
             />
           </Form.Item>
 
@@ -104,6 +124,7 @@ export default function CreateAccount() {
                 Must be at least 8 characters.
               </Text>
             }
+            className="mb-2"
           >
             <Input.Password
               placeholder="Create a password"
@@ -140,6 +161,7 @@ export default function CreateAccount() {
                 Must be at least 8 characters.
               </Text>
             }
+            className="mb-2"
           >
             <Input.Password
               placeholder="Confirm password"
@@ -164,8 +186,9 @@ export default function CreateAccount() {
             <Button
               type="primary"
               htmlType="submit"
-              className="w-full bg-cyan-600 hover:bg-cyan-700 border-cyan-600 text-lg h-12 rounded"
+              className="w-full bg-primary text-lg h-12 rounded"
               loading={isLoading}
+              disabled={!userType}
             >
               Sign Up
             </Button>

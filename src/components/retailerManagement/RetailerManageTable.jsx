@@ -1,44 +1,51 @@
 import React, { useState, useEffect } from "react";
-import { Table, Input, Button, Select, Modal } from "antd";
-import GradientButton from "../common/GradiantButton";
-import { useMyOrderQuery, useOrderDetailsQuery } from "../../redux/apiSlices/myOrderApi";
+import { Table, Input, Select } from "antd";
+import { useMyOrderQuery } from "../../redux/apiSlices/myOrderApi";
+import OrderDetailsModal from "./OrderDetailsModal";
 
 const MyOrderTable = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [queryParams, setQueryParams] = useState([]);
 
-  // Update query parameters whenever search or filter changes
+  // Update query parameters whenever search, filter, or pagination changes
   useEffect(() => {
     const params = [];
-    
+
     if (searchText) {
       params.push({ name: "searchTerm", value: searchText });
     }
-    
+
     if (selectedStatus) {
       params.push({ name: "orderStatus", value: selectedStatus });
     }
-    
+
+    // Add pagination params
+    params.push({ name: "page", value: currentPage });
+    params.push({ name: "limit", value: pageSize });
+
     setQueryParams(params);
-  }, [searchText, selectedStatus]);
-  
+  }, [searchText, selectedStatus, currentPage, pageSize]);
+
   // Use the updated queryParams for API call
-  const { data: orderData, isLoading } = useMyOrderQuery(queryParams.length > 0 ? queryParams : null);
-  console.log(orderData)
-  
-  // Only fetch order details when an ID is selected
-  const { data: orderDetails, isLoading: detailsLoading } = useOrderDetailsQuery(
-    selectedOrderId ? selectedOrderId : null,
-    { skip: !selectedOrderId }
+  const { data: orderData, isLoading } = useMyOrderQuery(
+    queryParams.length > 0 ? queryParams : null
   );
-  
-  console.log(orderDetails)
+
   // Function to handle search
   const handleSearch = (value) => {
     setSearchText(value.toLowerCase());
+    setCurrentPage(1);
+  };
+
+  // Function to handle status filter change
+  const handleStatusChange = (value) => {
+    setSelectedStatus(value);
+    setCurrentPage(1);
   };
 
   // Show details modal
@@ -53,6 +60,12 @@ const MyOrderTable = () => {
     setSelectedOrderId(null);
   };
 
+  // Handle pagination change
+  const handlePaginationChange = (page, size) => {
+    setCurrentPage(page);
+    setPageSize(size);
+  };
+
   const columns = [
     {
       title: "Invoice#",
@@ -65,6 +78,11 @@ const MyOrderTable = () => {
       dataIndex: "shippingAddress",
       key: "shippingAddress",
       align: "center",
+      render: (text) => {
+        if (!text) return "";
+        const firstPart = text.split(" ")[0];
+        return firstPart;
+      },
     },
     {
       title: "Order date",
@@ -97,7 +115,7 @@ const MyOrderTable = () => {
       dataIndex: "",
       key: "action",
       render: (_, record) => (
-        <div className="flex space-x-2 justify-center ">
+        <div className="flex space-x-2 justify-center">
           <button
             className="px-5 py-2 rounded-md border cursor-pointer border-primary"
             onClick={() => showDetails(record._id)}
@@ -109,35 +127,6 @@ const MyOrderTable = () => {
       ),
       align: "center",
     },
-  ];
-
-  // Products table columns for the modal
-  const productColumns = [
-    {
-      title: "Product ID",
-      dataIndex: ["productId", "name"],
-      key: "productId",
-    },
-    {
-      title: "Quantity",
-      dataIndex: "quantity",
-      key: "quantity",
-      align: "center",
-    },
-    {
-      title: "Price (per unit)",
-      dataIndex: "price",
-      key: "price",
-      render: (price) => `$${price}`,
-      align: "center",
-    },
-    {
-      title: "Total Amount",
-      dataIndex: "totalamout",
-      key: "totalamout",
-      render: (amount) => `$${amount}`,
-      align: "center",
-    }
   ];
 
   return (
@@ -153,7 +142,7 @@ const MyOrderTable = () => {
           />
           <Select
             placeholder="Filter by Status"
-            onChange={(value) => setSelectedStatus(value)}
+            onChange={handleStatusChange}
             className="w-64"
             allowClear
             style={{ height: "40px" }}
@@ -171,17 +160,10 @@ const MyOrderTable = () => {
           dataSource={orderData?.data || []}
           columns={columns}
           pagination={{
-            pageSize: 10,
-            total: orderData?.totalCount,
-            onChange: (page, pageSize) => {
-              setQueryParams([
-                ...queryParams.filter(
-                  (p) => p.name !== "page" && p.name !== "limit"
-                ),
-                { name: "page", value: page },
-                { name: "limit", value: pageSize },
-              ]);
-            },
+            current: currentPage,
+            pageSize: pageSize,
+            total: orderData?.pagination?.total || 0,
+            onChange: handlePaginationChange,
           }}
           bordered={false}
           size="small"
@@ -191,57 +173,12 @@ const MyOrderTable = () => {
         />
       </div>
 
-      {/* Modal for Order Details */}
-      <Modal
-        centered
-        title="Order Overview"
+      {/* Use the OrderDetailsModal component */}
+      <OrderDetailsModal
+        orderId={selectedOrderId}
         visible={modalVisible}
-        onCancel={handleModalClose}
-        footer={null}
-        width={800}
-      >
-        {orderDetails && !detailsLoading ? (
-          <div className="flex flex-col gap-6">
-            <div className="order-info bg-gray-50 p-4 rounded-md">
-              <h3 className="text-lg font-semibold mb-2">Order Information</h3>
-              <p>
-                <strong>Total Amount:</strong> $
-                {orderDetails?.data?.totalAmount}
-              </p>
-
-              <p>
-                <strong>Status:</strong>{" "}
-                {orderDetails?.data?.orderStatus || orderDetails.orderStatus}
-              </p>
-
-              <p>
-                <strong>Order Date:</strong>{" "}
-                {new Date(
-                  orderDetails?.data?.createdAt || orderDetails.createdAt
-                ).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Shipping Address:</strong>{" "}
-                {orderDetails?.data?.shippingAddress}
-              </p>
-            </div>
-
-            <div className="products">
-              <h3 className="text-lg font-semibold mb-2">Ordered Products</h3>
-              <Table
-                dataSource={orderDetails?.data?.products || []}
-                columns={productColumns}
-                pagination={false}
-                rowKey="_id"
-                bordered
-                size="small"
-              />
-            </div>
-          </div>
-        ) : (
-          <div className="text-center py-8">Loading order details...</div>
-        )}
-      </Modal>
+        onClose={handleModalClose}
+      />
     </div>
   );
 };

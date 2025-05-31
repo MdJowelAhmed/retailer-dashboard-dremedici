@@ -171,16 +171,30 @@ input[type="number"]::-webkit-inner-spin-button {
 
 /* Custom Switch background color when OFF */
 .custom-switch .ant-switch-checked {
-  background-color: #6200EE !important;  /* Change this to your preferred color */
+  background-color: #6200EE !important;  
 }
 
 /* Custom Switch background color when ON */
 .custom-switch .ant-switch {
-  background-color: #6200EE !important; /* Change this to your preferred color for OFF state */
+  background-color: #6200EE !important; 
 }
 
-/* Optional: Change the switch handle color */
+
 .custom-switch .ant-switch-inner {
-  background-color:#6200EE !important; /* Change the handle color */
+  background-color:#6200EE !important; 
 }
 
+.ant-pagination-item {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+.ant-pagination-item-active {
+  background-color: white !important; 
+  border-color: #6200EE !important;   
+  color: black !important;           
+}
+
+
+.ant-pagination-item-active a {
+  color: black !important; 
+}

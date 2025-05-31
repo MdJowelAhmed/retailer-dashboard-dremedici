@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, message, Input, Modal } from "antd";
+import { Table, Button, message } from "antd";
 import { MinusCircleOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import {
   useGetProductsQuery,
@@ -8,10 +8,22 @@ import {
 
 const OrderTable = () => {
   const [products, setProducts] = useState([]);
-  const { data, isLoading: productsLoading } = useGetProductsQuery();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [queryParams, setQueryParams] = useState([]);
+  const { data, isLoading: productsLoading } = useGetProductsQuery(
+    queryParams.length > 0 ? queryParams : null
+  );
   const [orderProduct, { isLoading }] = useOrderProductMutation();
-  const [shippingAddress, setShippingAddress] = useState("");
-  const [isAddressModalVisible, setIsAddressModalVisible] = useState(false);
+  console.log(data)
+
+  // Update query parameters whenever pagination changes
+  useEffect(() => {
+    const params = [];
+    params.push({ name: "page", value: currentPage });
+    params.push({ name: "limit", value: pageSize });
+    setQueryParams(params);
+  }, [currentPage, pageSize]);
 
   useEffect(() => {
     if (data?.data) {
@@ -22,8 +34,9 @@ const OrderTable = () => {
         name: product.name || `Product-${index + 1}`,
         category: product.category || "Cigar",
         inStockCount: product.quantity || 0,
-        availableStock: product.quantity || 0, // Added new field to track remaining stock
+        availableStock: product.quantity || 0,
         productPrice: product.price || 200,
+        productSize: product.size || "",
         quantity: 0,
       }));
       setProducts(formattedProducts);
@@ -33,12 +46,9 @@ const OrderTable = () => {
   const updateQuantity = (index, delta) => {
     const newProducts = [...products];
     const currentProduct = newProducts[index];
-
-    // Calculate new quantity and ensure it's not negative
     const newQty = currentProduct.quantity + delta;
 
     if (delta > 0) {
-      // When increasing quantity, check available stock
       if (currentProduct.availableStock <= 0) {
         message.warning(`No more stock available for ${currentProduct.name}`);
         return;
@@ -46,16 +56,13 @@ const OrderTable = () => {
     }
 
     if (newQty < 0) {
-      // Don't allow negative quantities
       currentProduct.quantity = 0;
     } else if (newQty > currentProduct.inStockCount) {
-      // Don't allow ordering more than initial stock
       message.warning(
         `Cannot order more than available stock (${currentProduct.inStockCount})`
       );
       return;
     } else {
-      // Update quantity and available stock
       currentProduct.quantity = newQty;
       currentProduct.availableStock = currentProduct.inStockCount - newQty;
     }
@@ -67,6 +74,11 @@ const OrderTable = () => {
     (sum, item) => sum + item.quantity * item.productPrice,
     0
   );
+
+  const handlePaginationChange = (page, size) => {
+    setCurrentPage(page);
+    setPageSize(size);
+  };
 
   const totalBox = products.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -87,17 +99,14 @@ const OrderTable = () => {
         return;
       }
 
-      if (!shippingAddress.trim()) {
-        setIsAddressModalVisible(true);
-        return;
-      }
+      // Removed address validation and modal
 
       const orderData = {
         products: productsToOrder,
         source: "Retailer",
         orderBoxs: totalBox,
         totalAmount,
-        shippingAddress,
+        // No shippingAddress field here
       };
 
       console.log("Sending order data:", orderData);
@@ -108,25 +117,15 @@ const OrderTable = () => {
       const resetProducts = products.map((product) => ({
         ...product,
         quantity: 0,
-        availableStock: product.inStockCount, // Reset available stock to original value
+        availableStock: product.inStockCount,
       }));
       setProducts(resetProducts);
-      setShippingAddress("");
     } catch (error) {
       message.error(
         `Failed to place order: ${error.message || "Unknown error"}`
       );
       console.error("Order error:", error);
     }
-  };
-
-  const handleAddressSubmit = () => {
-    if (!shippingAddress.trim()) {
-      message.error("Please enter a shipping address");
-      return;
-    }
-    setIsAddressModalVisible(false);
-    handlePlaceOrder();
   };
 
   const columns = [
@@ -144,16 +143,19 @@ const OrderTable = () => {
       align: "center",
     },
     {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
-      align: "center",
-    },
-    {
       title: "Available Stock",
-      dataIndex: "availableStock", // Changed to show dynamic available stock
+      dataIndex: "availableStock",
       key: "availableStock",
       align: "center",
+      render: (_, record) => (
+        <span
+          className={`font-medium ${
+            record.availableStock > 0 ? "text-green-600" : "text-red-600"
+          }`}
+        >
+          {record.availableStock > 0 ? "Yes" : "No"}
+        </span>
+      ),
     },
     {
       title: "Product Price",
@@ -163,7 +165,14 @@ const OrderTable = () => {
       render: (price) => `$${price}`,
     },
     {
-      title: "Quantity",
+      title: "Product Size",
+      dataIndex: "productSize",
+      key: "productSize",
+      align: "center",
+      // render: (size) => `${size}`,
+    },
+    {
+      title: "Box Count",
       key: "quantity",
       align: "center",
       render: (_, record, index) => (
@@ -179,7 +188,7 @@ const OrderTable = () => {
             icon={<PlusCircleOutlined />}
             onClick={() => updateQuantity(index, 1)}
             size="small"
-            disabled={record.availableStock <= 0} // Disable when no more stock available
+            disabled={record.availableStock <= 0}
           />
         </div>
       ),
@@ -193,19 +202,23 @@ const OrderTable = () => {
   ];
 
   return (
-    <div className="">
-      {/* Product Table */}
+    <div>
       <div className="p-4 overflow-hidden bg-gradient-to-r from-primary to-secondary rounded-xl">
         <Table
           columns={columns}
           dataSource={products}
           bordered
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: data?.data?.pagination?.total || 0,
+            onChange: handlePaginationChange,
+          }}
           rowClassName="bg-white rounded-lg"
           loading={productsLoading}
         />
       </div>
 
-      {/* Shopping Cart */}
       <div className="w-full p-6 mt-8 ml-auto shadow-lg md:w-96 bg-primary rounded-xl">
         <h2 className="mb-4 text-lg font-semibold text-white">Shopping Cart</h2>
         <div className="space-y-1 text-gray-700">
@@ -213,41 +226,18 @@ const OrderTable = () => {
           <p className="text-white">Total amount: ${totalAmount}</p>
         </div>
         <div className="mt-4">
-          <Input.TextArea
-            placeholder="Enter shipping address"
-            value={shippingAddress}
-            onChange={(e) => setShippingAddress(e.target.value)}
-            className="mb-4"
-            rows={2}
-          />
           <Button
             type="primary"
             className="bg-third w-full"
             onClick={handlePlaceOrder}
             loading={isLoading}
             disabled={totalBox === 0}
-            style={{ color: totalBox === 0 ? "white" : "inherit" }}
+            style={{ color: totalBox === 0 ? "white" : "white" }}
           >
             Place Order
           </Button>
         </div>
       </div>
-
-      {/* Address Modal */}
-      <Modal
-        title="Shipping Address Required"
-        open={isAddressModalVisible}
-        onOk={handleAddressSubmit}
-        onCancel={() => setIsAddressModalVisible(false)}
-      >
-        <p>Please enter your shipping address:</p>
-        <Input.TextArea
-          value={shippingAddress}
-          onChange={(e) => setShippingAddress(e.target.value)}
-          placeholder="Enter your complete shipping address"
-          rows={3}
-        />
-      </Modal>
     </div>
   );
 };

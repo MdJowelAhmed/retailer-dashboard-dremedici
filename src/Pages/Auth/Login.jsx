@@ -3,6 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import FormItem from "../../components/common/FormItem";
 import { useLoginMutation } from "../../redux/apiSlices/authSlice";
+import Spinner from "../../components/common/Spinner";
 
 
 const Login = () => {
@@ -30,6 +31,8 @@ const Login = () => {
       }
     }
   };
+
+  if(isLoading) <Spinner />
 
   return (
     <div>

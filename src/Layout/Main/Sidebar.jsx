@@ -199,6 +199,12 @@ const Sidebar = () => {
         onCancel={handleCancel}
         okText="Logout"
         cancelText="Cancel"
+        okButtonProps={{
+          style: {
+            backgroundColor: "#6200EE",
+            color: "white",
+          },
+        }}
       >
         <p>Are you sure you want to logout?</p>
       </Modal>

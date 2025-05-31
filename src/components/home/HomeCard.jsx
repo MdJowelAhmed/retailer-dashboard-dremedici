@@ -1,29 +1,38 @@
 import React from "react";
 import { FaUsers } from "react-icons/fa6"; // Static icon import
-import { useSummaryQuery } from "../../redux/apiSlices/homeSlice"; // I assume you want to keep this for other purposes
+import { useSummaryQuery } from "../../redux/apiSlices/homeSlice";
+import { FaDollarSign, FaShoppingCart } from "react-icons/fa";
 
 const HomeCard = () => {
-  // Fetch the data if needed
   const { data } = useSummaryQuery();
-  const cardData=data?.data
+  const cardData = data?.data;
+
+  // Format number to currency string like $14,396.90
+  const formatCurrency = (num) => {
+    if (typeof num !== "number") return "-";
+    return num.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+    });
+  };
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 h-[120px] mb-9">
       <SalesRepsCard
-        icon={FaUsers}
-        value={cardData?.totalPurchaseAmount}
+        icon={FaDollarSign}
+        value={formatCurrency(cardData?.totalPurchaseAmount)}
         label="Total Purchased"
       />
       <SalesRepsCard
-        icon={FaUsers}
-        value={cardData?.totalOrderCompleate}
-        label="Total Completed Orders"
+        icon={FaShoppingCart}
+        value={cardData?.totalOrderCompleate ?? 0}
+        label="Total Orders Placed"
       />
     </div>
   );
 };
 
-// SalesRepsCard Component Inside the Same File
 const SalesRepsCard = ({ icon: Icon, value, label }) => {
   return (
     <div className="bg-gradient-to-r from-primary to-secondary shadow-lg rounded-lg p-2 lg:p-6 flex items-center justify-between gap-4 hover:shadow-xl transition-shadow duration-300">
